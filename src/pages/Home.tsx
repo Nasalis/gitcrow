@@ -1,13 +1,10 @@
 import { BookmarksSimple, ClockCounterClockwise, GitPullRequest, Star } from "phosphor-react";
 import { RepositoryCard } from "../components/RepositoryCard";
+import { repoMock } from "../mock";
 
 export function Home() {
-    let fakeRepository = {
-        title: "ramirez",
-        description: "Project to build a portfolio for photo...",
-        language: "Typescript",
-        update: "Updated 20 days ago"
-    }
+    const allUserRepos = repoMock;
+    const allLanguages = new Set(repoMock.map(repo => repo.language));
 
     return (
         <div className="flex items-center justify-center w-full h-screen bg-black-100">
@@ -26,21 +23,11 @@ export function Home() {
                     <div className="text-white-200 font-normal text-lg capitalize mt-6">
                         <span>Most used languages</span>
                         <ul>
-                            <li className="text-green-100 font-medium text-sm">
-                                Language01
-                            </li>
-                            <li className="text-green-100 font-medium text-sm">
-                                Language01
-                            </li>
-                            <li className="text-green-100 font-medium text-sm">
-                                Language01
-                            </li>
-                            <li className="text-green-100 font-medium text-sm">
-                                Language01
-                            </li>
-                            <li className="text-green-100 font-medium text-sm">
-                                Language01
-                            </li>
+                            {Array.from(allLanguages).map(language => (
+                                <li className="text-green-100 font-medium text-sm">
+                                    {language}
+                                </li>
+                            ))}
                         </ul>
                     </div>
                 </aside>
@@ -82,18 +69,16 @@ export function Home() {
                         <footer className="text-base font-normal text-white-200">000</footer>
                     </li>
                 </ul>
-                <section className="col-start-5 col-end-13 row-start-2 row-end-2 bg-black-300 px-8 py-6">
+                <section className="col-start-5 col-end-13 row-start-2 row-end-3 bg-black-300 px-8 py-6">
                     <h2 className="text-[1.125rem] text-white-100 text-opacity-50 font-bold mb-8">
                         Contributions
                     </h2>
                
-                    <ul className="flex flex-wrap items-center justify-start gap-3">
-                        <RepositoryCard repository={fakeRepository}/>
-                        <RepositoryCard repository={fakeRepository}/>
-                        <RepositoryCard repository={fakeRepository}/>
-                        <RepositoryCard repository={fakeRepository}/>
-                        <RepositoryCard repository={fakeRepository}/>
-                        <RepositoryCard repository={fakeRepository}/>
+                    <ul className="flex flex-wrap items-center justify-start gap-3 h-60 overflow-auto">
+                        {allUserRepos.map(repo => (
+                            <RepositoryCard key={repo.id} repository={repo}/>
+
+                        ))}
                     </ul>
                 </section>
             </main>
