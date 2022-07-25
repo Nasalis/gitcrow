@@ -1,8 +1,12 @@
+import { formatUpdatedDate } from "../utils/formatDate";
+
 interface Repository {
-    title: string;
-    description: string;
-    language?: string;
-    update: string;
+    id: number;
+    name: string;
+    updated_at: string;
+    description: string | null;
+    language: string | null;
+    html_url: string;
 }
 
 interface Props {
@@ -11,12 +15,14 @@ interface Props {
 
 export function RepositoryCard({repository}: Props) {
     return (
-        <li className="w-[230px] h-full bg-black-100 grid items-start shadow-md rounded-xl px-3 py-4 gap-3">
-            <span className="text-xs font-bold text-white-100">{repository.title}</span>
-            <p className="text-[0.625rem] font-semibold text-gray-200">{repository.description}</p>
+        <li className="w-[230px] h-28 bg-black-100 grid items-start shadow-md rounded-xl px-3 py-4 gap-3">
+            <span className="text-xs font-bold text-white-100">{repository.name}</span>
+            <p className="w-full text-[0.625rem] font-semibold text-gray-200 text-ellipsis overflow-hidden whitespace-nowrap">
+                {repository.description ? repository.description : "No description"}
+            </p>
             <footer className="flex items-center gap-3 w-full">
+                <small className="text-[0.625rem] font-medium text-green-100">{formatUpdatedDate(repository.updated_at)}</small>
                 <small className="text-[0.625rem] font-medium text-pink-100">{repository.language}</small>
-                <small className="text-[0.625rem] font-medium text-green-100">{repository.update}</small>
             </footer>
         </li>
     )
