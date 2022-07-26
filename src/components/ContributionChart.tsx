@@ -1,5 +1,5 @@
 import { Line, LineConfig } from "@ant-design/charts";
-import { Contribution } from "../pages/Home";
+import { Contribution } from "../contexts/SearchBarContext";
 
 interface Props {
     data: Contribution[]
