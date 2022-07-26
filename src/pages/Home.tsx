@@ -4,9 +4,9 @@ import { CardLoading } from "../components/CardLoading";
 import { CardProfileLoading } from "../components/CardProfileLoading";
 import { CardUserInfo } from "../components/CardUserInfo";
 import { ContributionChart } from "../components/ContributionChart";
-import { LanguageProgress } from "../components/LanguageProgress";
 import { RepositoryCard } from "../components/RepositoryCard";
-import { repoMock } from "../mock";
+import { TopLanguage } from "../components/TopLanguage";
+import { calculatePercentualValue } from "../utils/calculatePercentualValue";
 import { calculateTopLanguages } from "../utils/calculateTopLanguages";
 import { token } from "../utils/token";
 
@@ -70,15 +70,6 @@ export function Home() {
     const [loading, setLoading] = useState(true);
     const [allContributions, setAllContributions] = useState<Contribution[]>([]);
     const [userData, setUserData] = useState<UserData>({} as UserData);
-
-    const animationTimes = [
-        "animate-[wiggleX_0.52s_ease-in-out]",
-        "animate-[wiggleX_0.54s_ease-in-out]",
-        "animate-[wiggleX_0.56s_ease-in-out]",
-        "animate-[wiggleX_0.58s_ease-in-out]",
-        "animate-[wiggleX_0.60s_ease-in-out]",
-        "animate-[wiggleX_0.62s_ease-in-out]",
-    ]
 
     useEffect(() => {
         async function getUserData(token: string, userName: string) {
@@ -149,7 +140,8 @@ export function Home() {
             })
         }
         async function getUser() {
-            const data: UserData = await getUserData(token, "Nasalis");
+            setLoading(true)
+            const data: UserData = await getUserData(token, "anuraghazra");
             setUserData(data);
             let allWeeks = data.data.user.contributionsCollection.contributionCalendar.weeks;
             getAllWeeksContributions(allWeeks)
@@ -170,7 +162,7 @@ export function Home() {
                 {loading ? (
                     <CardProfileLoading/>
                 ) : (
-                    <aside className="relative col-start-1 col-end-4 row-start-1 row-end-3 bg-black-300 shadow-md w-[23.125rem] h-full rounded-xl p-10">
+                    <aside className="relative flex flex-col gap-x-10 sm:flex-row xl:grid col-start-1 col-end-13 xl:col-start-1 xl:col-end-4 row-start-2 row-end-3 xl:row-start-1 xl:row-end-3 bg-black-300 shadow-md w-full xl:w-[23.125rem] h-full rounded-xl p-10">
                         <div className="flex items-center flex-col justify-center gap-6">
                             <img
                                 className="rounded-full w-[9.375rem] animate-[wiggle_0.5s_ease-in-out]" 
@@ -181,27 +173,23 @@ export function Home() {
                                 {userData.data !== undefined && userData?.data.user.name}
                             </h1>
                         </div>
-                        <div className="text-white-200 font-normal text-lg capitalize mt-6">
-                            <span className="animate-[wiggleX_0.5s_ease-in-out]" >Most used languages</span>
-                            <ul className="max-h-96 h-full overflow-auto">
-                                {topLanguages.map((language, index) => (
-                                    <li>
-                                        <span className={`w-full h-full text-green-100 font-medium text-sm ${animationTimes[index]}`}>
-                                            {language.name}
-                                        </span>
-                                        <div className="flex items-center justify-between">
-                                            <LanguageProgress color={language.color} value={language.size} totalSize={topLanguagesTotalSize}/>
-                                            <small className="text-purple-100 text-xs font-bold">
-                                                {((language.size / topLanguagesTotalSize) * 100).toFixed(2)}%
-                                            </small>
-                                        </div>
-                                    </li>
+                        <div className="w-full text-white-200 font-normal text-lg capitalize mt-6">
+                            <span className="flex w-full justify-center text-center mb-4 animate-[wiggleX_0.5s_ease-in-out]" >Most used languages</span>
+                            <ul className="flex flex-wrap justify-center gap-x-8 xl:flex-col xl:flex-nowrap xl:justify-start max-h-96 h-full overflow-auto">
+                                {topLanguages.map(language => (
+                                    calculatePercentualValue(language.size, topLanguagesTotalSize) > 1 ? (
+                                        <TopLanguage
+                                            key={language.name}
+                                            language={language}
+                                            totalSize={topLanguagesTotalSize}
+                                        />
+                                    ) : ""
                                 ))}
                             </ul>
                         </div>
                     </aside>
                 )}
-                <ul className="flex col-start-5 col-end-13 row-start-1 row-end-2 justify-between gap-8">
+                <ul className="flex flex-col w-screen justify-between md:w-full md:flex-row md:col-start-1 md:col-end-13 xl:col-start-5 xl:col-end-13 row-start-1 row-end-2 gap-8">
                     {loading ? (
                         [1, 2, 3, 4].map(card => (
                             <CardLoading key={card} />
@@ -231,14 +219,14 @@ export function Home() {
                         </>
                     )}
                 </ul>
-                <section className="col-start-5 col-end-13 row-start-2 row-end-3 self-stretch bg-black-300 px-8 py-6">
+                <section className="col-start-1 col-end-13 xl:col-start-5 xl:col-end-13 row-start-3 row-end-4 xl:row-start-2 xl:row-end-3 self-stretch bg-black-300 px-8 py-6">
                     <h2 className="text-[1.125rem] text-white-100 text-opacity-50 font-bold mb-8">
                         Contributions
                     </h2>
                     <div className="h-64 mb-10">
                         <ContributionChart data={allContributions}/>
                     </div>
-                    <ul className="flex flex-wrap items-center justify-start gap-3 h-60 overflow-auto">
+                    <ul className="flex flex-wrap items-center justify-center gap-3 h-60 overflow-auto">
                         {userData.data !== undefined && userData.data.user.repositories.nodes.map(repo => (
                             <RepositoryCard key={repo.id} repository={repo}/>
                         ))}
