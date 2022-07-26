@@ -1,4 +1,4 @@
-import { MagnifyingGlass, Moon } from "phosphor-react"
+import { MagnifyingGlass } from "phosphor-react"
 import { Logo } from "./Logo"
 
 export function SearchBar() {
@@ -16,8 +16,8 @@ export function SearchBar() {
                     type="text" 
                     placeholder="Searching for a user"
                 />
-                <button className="w-12 h-12 flex items-center justify-center bg-black-200 bg-opacity-50 rounded-md shadow-md">
-                    <Moon  weight="fill" size={25} color="#CDCDCD"/>
+                <button className="max-w-sm w-full h-12 flex items-center justify-center bg-purple-100 bg-opacity-50 rounded-md shadow-md text-white-100 font-bold tracking-wide hover:bg-opacity-40 transition-all">
+                    Search
                 </button>
             </div>
         </header>
