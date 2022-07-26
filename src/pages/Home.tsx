@@ -1,11 +1,12 @@
 import { BookmarksSimple, ClockCounterClockwise, GitPullRequest, Star } from "phosphor-react";
 import { useEffect, useState } from "react";
+import { ContributionChart } from "../components/ContributionChart";
 import { RepositoryCard } from "../components/RepositoryCard";
 import { repoMock } from "../mock";
 import { formatAmountInfo } from "../utils/formatAmountInfo";
 import { token } from "../utils/token";
 
-interface Contribution {
+export interface Contribution {
     weekday: number;
     date: string;
     contributionCount: number
@@ -139,8 +140,8 @@ export function Home() {
     console.log(allContributions)
 
     return (
-        <div className="flex items-center justify-center w-full h-screen bg-black-100">
-            <main className="grid grid-cols-12 grid-rows-1 items-start justify-center w-[1170px]">
+        <div className="flex items-center justify-center w-full min-h-screen bg-black-100">
+            <main className="grid grid-cols-12 grid-rows-1 items-start gap-y-4 justify-center w-full h-full">
                 <aside className="relative col-start-1 col-end-4 row-start-1 row-end-3 bg-black-300 shadow-md w-[23.125rem] rounded-xl p-10">
                     <div className="flex items-center flex-col justify-center gap-6">
                         <img
@@ -211,7 +212,9 @@ export function Home() {
                     <h2 className="text-[1.125rem] text-white-100 text-opacity-50 font-bold mb-8">
                         Contributions
                     </h2>
-               
+                    <div className="h-64 mb-10">
+                        <ContributionChart data={allContributions}/>
+                    </div>
                     <ul className="flex flex-wrap items-center justify-start gap-3 h-60 overflow-auto">
                         {userData.data !== undefined && userData.data.user.repositories.nodes.map(repo => (
                             <RepositoryCard key={repo.id} repository={repo}/>
