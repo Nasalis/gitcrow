@@ -4,8 +4,10 @@ import { CardLoading } from "../components/CardLoading";
 import { CardProfileLoading } from "../components/CardProfileLoading";
 import { CardUserInfo } from "../components/CardUserInfo";
 import { ContributionChart } from "../components/ContributionChart";
+import { LanguageProgress } from "../components/LanguageProgress";
 import { RepositoryCard } from "../components/RepositoryCard";
 import { repoMock } from "../mock";
+import { calculateTopLanguages } from "../utils/calculateTopLanguages";
 import { token } from "../utils/token";
 
 export interface Contribution {
@@ -13,7 +15,7 @@ export interface Contribution {
     date: string;
     contributionCount: number
 }
-interface Repository {
+export interface Repository {
     primaryLanguage: {
         name: string | null;
     }
@@ -25,11 +27,12 @@ interface Repository {
                 color: string;
                 name: string;
             }[]
-        }
+        }[]
     }
     id: string;
     updatedAt: string;
     description: string | null;
+    size: number;
 }
 interface GetUserDataResponse {
     user: {
@@ -51,15 +54,22 @@ interface GetUserDataResponse {
         }
     };
 }
+
+export interface Language {
+    name: string;
+    color: string;
+    size: number;
+}
 interface UserData {
     data: GetUserDataResponse
 }
 
 export function Home() {
+    const [topLanguages, setTopLanguages] = useState<Language[]>([]);
+    const [topLanguagesTotalSize, setTopLanguagesTotalSize] = useState(0);
     const [loading, setLoading] = useState(true);
     const [allContributions, setAllContributions] = useState<Contribution[]>([]);
     const [userData, setUserData] = useState<UserData>({} as UserData);
-    const allLanguages = new Set(repoMock.map(repo => repo.language));
 
     const animationTimes = [
         "animate-[wiggleX_0.52s_ease-in-out]",
@@ -144,6 +154,9 @@ export function Home() {
             let allWeeks = data.data.user.contributionsCollection.contributionCalendar.weeks;
             getAllWeeksContributions(allWeeks)
             .then(setAllContributions)
+            const topLanguagesInfo = calculateTopLanguages(data.data.user.repositories.nodes);
+            setTopLanguagesTotalSize(topLanguagesInfo[0]);
+            setTopLanguages(topLanguagesInfo[1]);
             setTimeout(() => {
                 setLoading(false)
             }, 1000);
@@ -153,11 +166,11 @@ export function Home() {
 
     return (
         <div className="flex items-center justify-center w-full min-h-screen bg-black-100">
-            <main className="grid grid-cols-12 grid-rows-1 items-start gap-y-4 justify-center w-full h-full">
+            <main className="grid grid-cols-12 grid-rows-1 items-start gap-y-4 mb-4 justify-center w-full h-full">
                 {loading ? (
                     <CardProfileLoading/>
                 ) : (
-                    <aside className="relative col-start-1 col-end-4 row-start-1 row-end-3 bg-black-300 shadow-md w-[23.125rem] rounded-xl p-10">
+                    <aside className="relative col-start-1 col-end-4 row-start-1 row-end-3 bg-black-300 shadow-md w-[23.125rem] h-full rounded-xl p-10">
                         <div className="flex items-center flex-col justify-center gap-6">
                             <img
                                 className="rounded-full w-[9.375rem] animate-[wiggle_0.5s_ease-in-out]" 
@@ -170,10 +183,18 @@ export function Home() {
                         </div>
                         <div className="text-white-200 font-normal text-lg capitalize mt-6">
                             <span className="animate-[wiggleX_0.5s_ease-in-out]" >Most used languages</span>
-                            <ul>
-                                {Array.from(allLanguages).map((language, index) => (
-                                    <li className={`text-green-100 font-medium text-sm ${animationTimes[index]}`}>
-                                        {language}
+                            <ul className="max-h-96 h-full overflow-auto">
+                                {topLanguages.map((language, index) => (
+                                    <li>
+                                        <span className={`w-full h-full text-green-100 font-medium text-sm ${animationTimes[index]}`}>
+                                            {language.name}
+                                        </span>
+                                        <div className="flex items-center justify-between">
+                                            <LanguageProgress color={language.color} value={language.size} totalSize={topLanguagesTotalSize}/>
+                                            <small className="text-purple-100 text-xs font-bold">
+                                                {((language.size / topLanguagesTotalSize) * 100).toFixed(2)}%
+                                            </small>
+                                        </div>
                                     </li>
                                 ))}
                             </ul>
@@ -189,8 +210,8 @@ export function Home() {
                         <>
                             <CardUserInfo 
                                 icon={<Star size={20} />} 
-                                title="Total stars earned" 
-                                content={1}
+                                title="Total contribution" 
+                                content={userData?.data.user.contributionsCollection.contributionCalendar.totalContributions}
                             />
                             <CardUserInfo 
                                 icon={<ClockCounterClockwise size={20} />} 
@@ -210,7 +231,7 @@ export function Home() {
                         </>
                     )}
                 </ul>
-                <section className="col-start-5 col-end-13 row-start-2 row-end-3 bg-black-300 px-8 py-6">
+                <section className="col-start-5 col-end-13 row-start-2 row-end-3 self-stretch bg-black-300 px-8 py-6">
                     <h2 className="text-[1.125rem] text-white-100 text-opacity-50 font-bold mb-8">
                         Contributions
                     </h2>
