@@ -12,8 +12,28 @@ export function ContributionChart({data}: Props) {
         xField: 'date',
         yField: 'contributionCount',
         xAxis: {
-          tickCount: 5,
+            title: {
+                text: "Contribution date",
+                style: {
+                    fill: "#919397",
+                    fontSize: 18,
+                }
+            },
+            label: {
+                style: {
+                    opacity: 0,
+                }
+            }
         },
+        tooltip: {
+            formatter: (datum: any) => {
+                return {
+                    name: "Contribution Amount",
+                    value: datum.contributionCount
+                }
+                
+            }
+        }
     };
 
     return <Line {...config} />;
