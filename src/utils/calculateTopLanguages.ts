@@ -1,9 +1,10 @@
-import { Language, Repository } from "../pages/Home";
 
 /* 
   Reference:
   https://github.com/anuraghazra/github-readme-stats/blob/master/src/fetchers/top-languages-fetcher.js
 */
+
+import { Language, Repository } from "../contexts/SearchBarContext";
 
 export function calculateTopLanguages(repositories: Repository[]): [number, Language[]] {
     let repoNodes = repositories;

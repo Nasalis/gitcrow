@@ -1,4 +1,4 @@
-import { Language } from "../pages/Home";
+import { Language } from "../contexts/SearchBarContext";
 import { LanguageProgress } from "./LanguageProgress";
 
 interface Props {

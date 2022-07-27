@@ -6,14 +6,14 @@ export function CardProfileLoading() {
                 <div className="rounded-full bg-purple-100 opacity-70 h-[9.375rem] w-[9.375rem]"></div>
                 <div className="rounded-full bg-purple-100 opacity-70 h-2 w-3/4"></div>
             </div>
-            {cardWidths.map(width => (
-                <>
+            {cardWidths.map((width, index) => (
+                <div key={index}>
                     <div className={`rounded-full bg-purple-100 opacity-70 mt-6 h-2 w-${width}`}></div>
                     <div className="rounded-full flex items-center justify-between w-full">
                         <div className="rounded-full bg-purple-100 opacity-70 mt-6 h-2 w-3/4"></div>
                         <div className="rounded-full bg-purple-100 opacity-70 mt-6 h-2 w-10"></div>
                     </div>
-                </>
+                </div>
             ))}
         </div>
     )
