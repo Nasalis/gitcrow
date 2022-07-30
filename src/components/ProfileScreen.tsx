@@ -15,9 +15,39 @@ interface Props {
 
 export function ProfileScreen({allContributions, topLanguages, topLanguagesTotalSize, userData}: Props) {
     
+    const cadsUserInfo = [
+        <CardUserInfo 
+            icon={<Star size={20} />} 
+            title="Total contribution" 
+            content={userData?.data.user.contributionsCollection.contributionCalendar.totalContributions}
+        />,
+        <CardUserInfo 
+            icon={<ClockCounterClockwise size={20} />} 
+            title="Total commits" 
+            content={userData?.data.user.contributionsCollection.totalCommitContributions}
+        />,
+        <CardUserInfo 
+            icon={<GitPullRequest size={20} />} 
+            title="Total pull requests" 
+            content={userData?.data.user.contributionsCollection.totalPullRequestContributions}
+        />,
+        <CardUserInfo 
+            icon={<BookmarksSimple size={20} />} 
+            title="Contributed to" 
+            content={userData?.data.user.contributionsCollection.totalRepositoriesWithContributedIssues}
+        />
+    ]
+
     return (
         <div className="flex items-center justify-center w-full min-h-screen bg-black-100">
-            <main className="grid grid-cols-12 grid-rows-1 items-start gap-y-4 mb-4 justify-center w-full h-full">
+            <main className="grid grid-cols-12 grid-rows-1 items-start gap-y-4 mb-4 justify-center">
+                <ul className="flex flex-wrap w-full place-content-center gap-4 col-start-1 col-end-13 xl:col-start-5 xl:col-end-13 xl:place-content-between row-start-1 row-end-2">
+                    {cadsUserInfo.map((card, index) => (
+                        <li key={index}>
+                            {card}
+                        </li>
+                    ))}
+                </ul>
                 <aside className="relative flex flex-col gap-x-10 sm:flex-row xl:grid col-start-1 col-end-13 xl:col-start-1 xl:col-end-4 row-start-2 row-end-3 xl:row-start-1 xl:row-end-3 bg-black-300 shadow-md w-full xl:w-[23.125rem] h-full rounded-xl p-10">
                     <div className="flex items-center flex-col justify-center gap-6">
                         <img
@@ -44,28 +74,6 @@ export function ProfileScreen({allContributions, topLanguages, topLanguagesTotal
                         </ul>
                     </div>
                 </aside>
-                <ul className="flex flex-col w-screen justify-between md:w-full md:flex-row md:col-start-1 md:col-end-13 xl:col-start-5 xl:col-end-13 row-start-1 row-end-2 gap-8">
-                    <CardUserInfo 
-                        icon={<Star size={20} />} 
-                        title="Total contribution" 
-                        content={userData?.data.user.contributionsCollection.contributionCalendar.totalContributions}
-                    />
-                    <CardUserInfo 
-                        icon={<ClockCounterClockwise size={20} />} 
-                        title="Total commits" 
-                        content={userData?.data.user.contributionsCollection.totalCommitContributions}
-                    />
-                    <CardUserInfo 
-                        icon={<GitPullRequest size={20} />} 
-                        title="Total pull requests" 
-                        content={userData?.data.user.contributionsCollection.totalPullRequestContributions}
-                    />
-                    <CardUserInfo 
-                        icon={<BookmarksSimple size={20} />} 
-                        title="Contributed to" 
-                        content={userData?.data.user.contributionsCollection.totalRepositoriesWithContributedIssues}
-                    />
-                </ul>
                 <section className="col-start-1 col-end-13 xl:col-start-5 xl:col-end-13 row-start-3 row-end-4 xl:row-start-2 xl:row-end-3 self-stretch bg-black-300 px-8 py-6">
                     <h2 className="text-[1.125rem] text-white-100 text-opacity-50 font-bold mb-8">
                         Contributions
@@ -73,7 +81,7 @@ export function ProfileScreen({allContributions, topLanguages, topLanguagesTotal
                     <div className="h-64 mb-10">
                         <ContributionChart data={allContributions}/>
                     </div>
-                    <ul className="flex flex-wrap items-center justify-center gap-3 h-60 overflow-auto">
+                    <ul className="flex flex-wrap items-center justify-center gap-3  py-2 h-60 overflow-auto">
                         {userData.data !== undefined && userData.data.user.repositories.nodes.map(repo => (
                             <RepositoryCard key={repo.id} repository={repo}/>
                         ))}

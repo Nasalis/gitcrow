@@ -1,9 +1,15 @@
 /** @type {import('tailwindcss').Config} */
+const defaultTheme = require('tailwindcss/defaultTheme')
+
 module.exports = {
   content: [
     './src/**/*.tsx'
   ],
   theme: {
+    screens: {
+      'sm/2': '540px',
+      ...defaultTheme.screens
+    },
     extend: {
       keyframes: {
         wiggle: {

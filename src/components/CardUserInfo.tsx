@@ -9,7 +9,7 @@ interface Props {
 
 export function CardUserInfo({icon, title, content}: Props) {
     return (
-        <li className="flex flex-col items-center justify-center p-3 gap-2 w-full md:w-[170px] bg-black-300 shadow-md rounded-xl">
+        <div className="flex flex-col items-center justify-center p-3 gap-2 w-[170px] bg-black-300 shadow-md rounded-xl">
             <header className="flex items-center justify-evenly text-red-100 gap-2">
                 <>
                     {icon}
@@ -19,6 +19,6 @@ export function CardUserInfo({icon, title, content}: Props) {
                 </>
             </header>
             <footer className="text-base font-normal text-white-200">{formatAmountInfo(content)}</footer>
-        </li>
+        </div>
     )
 }
