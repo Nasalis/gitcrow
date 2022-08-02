@@ -2,6 +2,7 @@ import { ProfileScreen } from "../components/ProfileScreen";
 import { ProfileScreenLoading } from "../components/ProfileScreenLoading";
 import { useSearchBar } from "../contexts/SearchBarContext";
 import Error404Video from "./../assets/404 error lost in space.mp4";
+import { Repository } from "./Repository";
 
 
 export function Home() {
@@ -16,7 +17,7 @@ export function Home() {
 
     return (
         <>
-            {loading ? (
+            {/* {loading ? (
                 <ProfileScreenLoading/>
             ) : (
                 userData.data !== undefined ? (
@@ -31,7 +32,8 @@ export function Home() {
                         <video src={Error404Video} autoPlay loop width={500} height={500}/>
                     </div>
                 )
-            )}
+            )} */}
+            <Repository/>
         </>
     )
 }
