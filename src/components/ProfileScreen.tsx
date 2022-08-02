@@ -1,40 +1,62 @@
 import { BookmarksSimple, ClockCounterClockwise, GitPullRequest, Star } from "phosphor-react";
+import { useEffect, useState } from "react";
 import { CardUserInfo } from "../components/CardUserInfo";
 import { ContributionChart } from "../components/ContributionChart";
 import { RepositoryCard } from "../components/RepositoryCard";
 import { TopLanguage } from "../components/TopLanguage";
-import { Contribution, Language, UserData } from "../contexts/SearchBarContext";
+import { Contribution, GetUserDataResponse } from "../contexts/SearchBarContext";
 import { calculatePercentualValue } from "../utils/calculatePercentualValue";
+import { calculateTopLanguages } from "../utils/calculateTopLanguages";
 
 interface Props {
-    allContributions: Contribution[],
-    topLanguages: Language[],
-    topLanguagesTotalSize: number,
-    userData: UserData,
+    userData: GetUserDataResponse,
 }
 
-export function ProfileScreen({allContributions, topLanguages, topLanguagesTotalSize, userData}: Props) {
+function getAllWeeksContributions(alllWeeks: {
+    contributionDays: Contribution[];
+}[]) {
+    return new Promise((resolve: React.Dispatch<React.SetStateAction<Contribution[]>>, reject) => {
+        let allContributions: Contribution[] = [];
+        alllWeeks.forEach(week => allContributions.push(...week.contributionDays))
+        resolve(allContributions)
+    })
+}
+
+export function ProfileScreen({userData}: Props) {
+    const [allContributions, setAllContributions] = useState<Contribution[]>([]);
+    const topLanguagesInfo = calculateTopLanguages(userData.user.repositories.nodes);
+    const topLanguagesTotalSize = topLanguagesInfo[0];
+    const topLanguages = topLanguagesInfo[1];
     
+    useEffect(() => {
+        let allWeeks = userData.user.contributionsCollection.contributionCalendar.weeks;
+        async function getContributions() {
+            await getAllWeeksContributions(allWeeks)
+            .then(setAllContributions)
+        }
+        getContributions();
+    }, [])
+
     const cadsUserInfo = [
         <CardUserInfo 
             icon={<Star size={20} />} 
             title="Total contribution" 
-            content={userData?.data.user.contributionsCollection.contributionCalendar.totalContributions}
+            content={userData?.user.contributionsCollection.contributionCalendar.totalContributions}
         />,
         <CardUserInfo 
             icon={<ClockCounterClockwise size={20} />} 
             title="Total commits" 
-            content={userData?.data.user.contributionsCollection.totalCommitContributions}
+            content={userData?.user.contributionsCollection.totalCommitContributions}
         />,
         <CardUserInfo 
             icon={<GitPullRequest size={20} />} 
             title="Total pull requests" 
-            content={userData?.data.user.contributionsCollection.totalPullRequestContributions}
+            content={userData?.user.contributionsCollection.totalPullRequestContributions}
         />,
         <CardUserInfo 
             icon={<BookmarksSimple size={20} />} 
             title="Contributed to" 
-            content={userData?.data.user.contributionsCollection.totalRepositoriesWithContributedIssues}
+            content={userData?.user.contributionsCollection.totalRepositoriesWithContributedIssues}
         />
     ]
 
@@ -52,11 +74,11 @@ export function ProfileScreen({allContributions, topLanguages, topLanguagesTotal
                     <div className="flex items-center flex-col justify-center gap-6">
                         <img
                             className="rounded-full w-[9.375rem] animate-[wiggle_0.5s_ease-in-out]" 
-                            src={userData.data ? userData.data.user.avatarUrl : ""}
+                            src={userData ? userData.user.avatarUrl : ""}
                             alt="foto de perfil do usuário" 
                         />
                         <h1 className="text-white-200 font-normal text-2xl text-center animate-[wiggle_0.7s_ease-in-out]">
-                            {userData.data !== undefined && userData?.data.user.name}
+                            {userData !== undefined && userData?.user.name}
                         </h1>
                     </div>
                     <div className="w-full text-white-200 font-normal text-lg capitalize mt-6">
@@ -82,7 +104,7 @@ export function ProfileScreen({allContributions, topLanguages, topLanguagesTotal
                         <ContributionChart data={allContributions}/>
                     </div>
                     <ul className="flex flex-wrap items-center justify-center gap-3  py-2 h-60 overflow-auto">
-                        {userData.data !== undefined && userData.data.user.repositories.nodes.map(repo => (
+                        {userData !== undefined && userData.user.repositories.nodes.map(repo => (
                             <RepositoryCard key={repo.id} repository={repo}/>
                         ))}
                     </ul>

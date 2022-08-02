@@ -8,7 +8,7 @@ export function SearchBar() {
     const [input, setInput] = useState("");
 
     const {
-        getUser,
+        getUserData,
     } = useSearchBar();
 
     return (
@@ -28,7 +28,7 @@ export function SearchBar() {
                 />
                 <button 
                     className="w-full sm/2:max-w-sm h-12 flex items-center justify-center bg-purple-100 bg-opacity-50 rounded-md shadow-md text-white-100 font-bold tracking-wide hover:bg-opacity-40 transition-all"
-                    onClick={() => getUser(input)}
+                    onClick={() => getUserData(input)}
                 >
                     Search
                 </button>
