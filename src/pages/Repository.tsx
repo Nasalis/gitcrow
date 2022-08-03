@@ -1,16 +1,18 @@
 import { gql, useQuery } from "@apollo/client";
-import { CaretRight } from "phosphor-react";
+import { CaretDown, CaretRight } from "phosphor-react";
 import { ContributorItem } from "../components/ContributorItem";
 import { RepositoryLanguageChart } from "../components/RepositoryLanguageChart";
 import { formatDateTime } from "../utils/formatDate";
 
 const GET_REPOSITORY_QUERY = gql`
-  query getRepositoryData($name: String!, $owner: String!){
+  query getRepositoryData($name: String!, $owner: String!, $after: String){
     repository(name: $name, owner: $owner) {
-      mentionableUsers(first: 100) {
+      id
+      mentionableUsers(first: 30, after: $after) {
         totalCount
         pageInfo {
           hasNextPage
+          endCursor
         }
         nodes {
           avatarUrl(size: 40)
@@ -18,6 +20,7 @@ const GET_REPOSITORY_QUERY = gql`
           twitterUsername
           websiteUrl
           url
+          id
         }
       }
       updatedAt
@@ -53,7 +56,7 @@ const GET_REPOSITORY_QUERY = gql`
           publishedAt
         }
       }
-      pullRequests(first: 100) {
+      pullRequests(last: 50) {
         edges {
           node {
             id
@@ -63,6 +66,9 @@ const GET_REPOSITORY_QUERY = gql`
               }
             }
             publishedAt
+            additions
+            changedFiles
+            deletions
           }
         }
       }
@@ -70,13 +76,16 @@ const GET_REPOSITORY_QUERY = gql`
         target {
           ... on Commit {
             id
-            history(first: 10, author: {}) {
+            history(author: {}, first: 50, since: "2022-01-01T00:00:00Z") {
               edges {
                 node {
                   committedDate
                   author {
                     name
                   }
+                  additions
+                  changedFiles
+                  deletions
                 }
               }
               totalCount
@@ -99,6 +108,7 @@ interface GetRepositoryQueryResponse {
       totalCount: number;
       pageInfo: {
         hasNextPage: number;
+        endCursor: string;
       }
       nodes: {
         avatarUrl: string;
@@ -106,6 +116,7 @@ interface GetRepositoryQueryResponse {
         twitterUsername: string;
         websiteUrl: string;
         url: string;
+        id: string;
       }[]
     }
     createdAt: string;
@@ -149,6 +160,9 @@ interface GetRepositoryQueryResponse {
             name: string;
           }
           publishedAt: string;
+          additions: number;
+          changedFiles: number;
+          deletions: number;
         }
       }[]
     }
@@ -162,6 +176,9 @@ interface GetRepositoryQueryResponse {
               author: {
                 name: string;
               }
+              additions: number;
+              changedFiles: number;
+              deletions: number;
             }
           }[]
           totalCount: number;
@@ -175,13 +192,28 @@ interface GetRepositoryQueryResponse {
 }
 
 export function Repository() {
-    const { data } = useQuery<GetRepositoryQueryResponse>(GET_REPOSITORY_QUERY, {
-      variables: {
-        name: "github-readme-stats", 
-        owner: "anuraghazra"
-      },
-      fetchPolicy: 'cache-and-network'
-    });
+  const { data, fetchMore } = useQuery<GetRepositoryQueryResponse>(GET_REPOSITORY_QUERY, {
+    variables: {
+      name: "github-readme-stats", 
+      owner: "anuraghazra",
+      after: null
+    },
+  });
+
+  function getCollaboratosListPagination() {
+    const { endCursor } = data?.repository.mentionableUsers.pageInfo!
+    fetchMore({
+      variables: {after: endCursor},
+      updateQuery: (prevResult, {fetchMoreResult}) => {
+        fetchMoreResult.repository.mentionableUsers.nodes = [
+          ...prevResult.repository.mentionableUsers.nodes,
+          ...fetchMoreResult.repository.mentionableUsers.nodes
+        ];
+        return fetchMoreResult;
+      }
+    })
+  }
+
 
     return (
         <div className="flex items-center justify-center w-full min-h-screen bg-black-100">
@@ -190,7 +222,7 @@ export function Repository() {
                     <div>
                         <div className="flex items-center gap-x-1">
                             <CaretRight weight="bold" size={20} color="#ffffff"/>
-                            <h1 className="text-[1.625rem] font-bold text-white-100">
+                            <h1 className="text-xl font-bold text-white-100">
                               {data?.repository.name}
                             </h1>
                         </div>
@@ -219,16 +251,26 @@ export function Repository() {
                         Contributors
                       </span>
                       <strong className="text-pink-100 font-bold">
-                        ({data?.repository.mentionableUsers?.totalCount!})
+                        ({data?.repository?.mentionableUsers?.nodes.length} / {data?.repository?.mentionableUsers?.totalCount})
                       </strong>
                     </div>
-                    <ul className="flex flex-col items-start gap-y-6 w-full h-52 overflow-auto">
-                        {data?.repository.mentionableUsers?.nodes.map(collaborator => (
-                          <ContributorItem 
-                            image={collaborator.avatarUrl}
-                            name={collaborator.name}
-                          />
-                        ))}
+                    <ul className="flex flex-col items-start gap-y-3 w-full h-56 overflow-auto">
+                        {data?.repository?.mentionableUsers?.nodes.map(collaborator => (
+                           <ContributorItem
+                             key={collaborator.id}
+                             collaborator={collaborator} 
+                           /> 
+                         ))}
+                       <li className="flex justify-center w-full h-10">
+                          <button 
+                            type="button"
+                            className="flex items-center justify-between py-1 px-3 gap-x-2 bg-purple-100 bg-opacity-50 rounded-md shadow-md text-white-100 font-bold tracking-wide hover:bg-opacity-40 transition-all" 
+                            onClick={() => getCollaboratosListPagination()}
+                          >
+                            Ver mais
+                            <CaretDown size={24} weight="fill" />
+                          </button>
+                        </li>
                     </ul>
                 </aside>
                 <div className="grid col-start-5 col-end-13 bg-black-300 gap-5 p-10">
