@@ -3,28 +3,18 @@ import { ProfileScreenLoading } from "../components/ProfileScreenLoading";
 import { useSearchBar } from "../contexts/SearchBarContext";
 import Error404Video from "./../assets/404 error lost in space.mp4";
 
-
 export function Home() {
     
-    const {
-        allContributions,
-        topLanguages,
-        topLanguagesTotalSize,
-        userData,
-        loading
-    } = useSearchBar();
+    const { data } = useSearchBar();
 
     return (
         <>
-            {loading ? (
+            {!data ? (
                 <ProfileScreenLoading/>
             ) : (
-                userData.data !== undefined ? (
+                data !== undefined ? (
                     <ProfileScreen 
-                        allContributions={allContributions} 
-                        topLanguages={topLanguages} 
-                        topLanguagesTotalSize={topLanguagesTotalSize} 
-                        userData={userData}
+                        userData={data}
                     />
                 ) : (
                     <div className="flex items-start justify-center min-h-screen h-full">

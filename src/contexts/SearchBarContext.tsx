@@ -1,6 +1,53 @@
-import { createContext, ReactNode, useContext, useEffect, useState } from "react";
-import { calculateTopLanguages } from "../utils/calculateTopLanguages";
-import { token } from "../utils/token";
+import { gql, OperationVariables, QueryResult, useLazyQuery } from "@apollo/client";
+import { createContext, ReactNode, useContext, useEffect } from "react";
+
+const GET_USER_QUERY = gql`
+    query getUserData($login: String!) {
+        user(login: $login) {
+            name
+            login
+            avatarUrl
+            contributionsCollection(
+                from: "2022-01-01T00:00:00Z"
+                to: "2022-12-12T23:59:59Z"
+            ) {
+            totalCommitContributions
+            totalPullRequestContributions
+            totalRepositoriesWithContributedIssues
+            contributionCalendar {
+                totalContributions
+                weeks {
+                contributionDays {
+                    weekday
+                    date
+                    contributionCount
+                }
+                }
+            }
+            }
+            repositories(ownerAffiliations: OWNER, isFork: false, first: 100) {
+                nodes {
+                    primaryLanguage {
+                        name
+                    }
+                    name
+                    languages(first: 10, orderBy: {field: SIZE, direction: DESC}) {
+                        edges {
+                            size
+                            node {
+                                color
+                                name
+                            }
+                        }
+                    }
+                    updatedAt
+                    description
+                    id
+                }   
+            }
+        }
+    }
+`
 
 export interface Contribution {
     weekday: number;
@@ -26,9 +73,10 @@ export interface Repository {
     description: string | null;
     size: number;
 }
-interface GetUserDataResponse {
+export interface GetUserDataResponse {
     user: {
         name: string;
+        login: string;
         avatarUrl: string;
         contributionsCollection: {
             totalCommitContributions: number;
@@ -57,12 +105,8 @@ export interface UserData {
 }
 
 interface SearchBarContextData {
-    allContributions: Contribution[];
-    topLanguages: Language[];
-    topLanguagesTotalSize: number;
-    userData: UserData;
-    loading: boolean;
-    getUser(userName: string): Promise<void>;
+    data: GetUserDataResponse | undefined;
+    getUserData(userName: string): Promise<QueryResult<GetUserDataResponse, OperationVariables>>
 }
 
 interface SearchBarContextProps {
@@ -74,112 +118,17 @@ export const SearchBarContext = createContext({} as SearchBarContextData);
 export function SearchBarContextProvider({
     children
 }: SearchBarContextProps) {
-
-    const [topLanguages, setTopLanguages] = useState<Language[]>([]);
-    const [topLanguagesTotalSize, setTopLanguagesTotalSize] = useState(0);
-    const [loading, setLoading] = useState(true);
-    const [allContributions, setAllContributions] = useState<Contribution[]>([]);
-    const [userData, setUserData] = useState<UserData>({} as UserData);
-
-    async function getUserData(token: string, userName: string) {
-        const headers = {
-            "Authorization": `Bearer ${token}`
-        };
-        const body = {
-            "query": `query {
-                user(login: "${userName}") {
-                    name
-                    avatarUrl
-                    contributionsCollection(
-                        from: "2022-01-01T00:00:00Z"
-                        to: "2022-12-12T23:59:59Z"
-                    ) {
-                      totalCommitContributions
-                      totalPullRequestContributions
-                      totalRepositoriesWithContributedIssues
-                      contributionCalendar {
-                        totalContributions
-                        weeks {
-                          contributionDays {
-                            weekday
-                            date
-                            contributionCount
-                          }
-                        }
-                      }
-                    }
-                    repositories(ownerAffiliations: OWNER, isFork: false, first: 100) {
-                        nodes {
-                            primaryLanguage {
-                                name
-                            }
-                            name
-                            languages(first: 10, orderBy: {field: SIZE, direction: DESC}) {
-                                edges {
-                                size
-                                node {
-                                color
-                                name
-                                }
-                            }
-                        }
-                        updatedAt
-                        description
-                        id
-                      }
-                    }
-                }
-            }`
-        };
-        const response = await fetch("https://api.github.com/graphql", {
-            method: "POST",
-            body: JSON.stringify(body),
-            headers: headers
-        });
-        const data = await response.json();
-        return data;
-    }
-    function getAllWeeksContributions(alllWeeks: {
-        contributionDays: Contribution[];
-    }[]) {
-        return new Promise((resolve: React.Dispatch<React.SetStateAction<Contribution[]>>, reject) => {
-            let allContributions: Contribution[] = [];
-            alllWeeks.forEach(week => allContributions.push(...week.contributionDays))
-            resolve(allContributions)
-        })
-    }
-    async function getUser(userName: string = "") {
-        setLoading(true)
-        const data: UserData = await getUserData(token, userName === "" ? "Nasalis" : userName);
-        if (data.data.user === undefined || data.data.user.name === null) {
-            setLoading(false);
-            setUserData({} as UserData)
-            return;
-        }
-        setUserData(data);
-        let allWeeks = data.data.user.contributionsCollection.contributionCalendar.weeks;
-        getAllWeeksContributions(allWeeks)
-        .then(setAllContributions)
-        const topLanguagesInfo = calculateTopLanguages(data.data.user.repositories.nodes);
-        setTopLanguagesTotalSize(topLanguagesInfo[0]);
-        setTopLanguages(topLanguagesInfo[1]);
-        setTimeout(() => {
-            setLoading(false)
-        }, 1000);
-    }
+    const [getUserInfo, { data }] = useLazyQuery<GetUserDataResponse>(GET_USER_QUERY)
+    const getUserData = (userName: string = "") => getUserInfo({variables: {login: userName === "" ? "Nasalis" : userName}})
 
     useEffect(() => {
-        getUser();
-    }, []);
+        getUserData();
+    }, [])
 
     return (
         <SearchBarContext.Provider value={{
-            allContributions,
-            topLanguages,
-            topLanguagesTotalSize,
-            userData,
-            loading,
-            getUser,
+            data,
+            getUserData,
         }}>
             {children}
         </SearchBarContext.Provider>

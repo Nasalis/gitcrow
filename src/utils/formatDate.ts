@@ -1,13 +1,13 @@
 type TypeTime = "day" | "days" | "week" | "weeks";
 
-function formatDateTime(updateDate: Date) {
+export function formatDateTime(updateDate: Date) {
     const formatedDateTimeString = new Intl.DateTimeFormat("en-US", {
         month: "short",
         day: "numeric",
         year: "numeric",
     }).format(new Date(updateDate));
 
-    return `Updated  on ${formatedDateTimeString}`;
+    return formatedDateTimeString;
 }
 
 function formatMessageToTimeLessThanOneMonth(value: number, typeTime: TypeTime) {
@@ -31,7 +31,7 @@ function makeMessageBasedInTime(difference: number, repoDate: Date) {
         let weeks = Math.floor(days / 7);
         return formatMessageToTimeLessThanOneMonth(weeks, weeks === 1 ? "week" : "weeks");
     }
-    return formatDateTime(repoDate);
+    return `Updated  on ${formatDateTime(repoDate)}`;
 };
 
 export function formatUpdatedDate(date: string) {

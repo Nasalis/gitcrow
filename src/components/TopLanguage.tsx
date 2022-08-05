@@ -15,7 +15,11 @@ export function TopLanguage({language, totalSize}: Props) {
                 {language.name}
             </span>
             <div className="flex items-center justify-between gap-x-5">
-                <LanguageProgress color={language.color} value={language.size} totalSize={totalSize}/>
+                {language.color ? (
+                    <LanguageProgress color={language.color} value={language.size} totalSize={totalSize}/>
+                ) : (
+                    <LanguageProgress color={"#39d353"} value={language.size} totalSize={totalSize}/>
+                )}
                 <small className="text-purple-100 text-xs font-bold">
                     {percentualValue}%
                 </small>
