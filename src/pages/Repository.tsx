@@ -1,5 +1,6 @@
 import { gql, NetworkStatus, useQuery } from "@apollo/client";
 import { CaretDown, CaretRight } from "phosphor-react";
+import { useParams } from "react-router-dom";
 import { CommitsHistory } from "../components/CommitsHistory";
 import { ContributorItem } from "../components/ContributorItem";
 import { LoadIcon } from "../components/LoadIcon";
@@ -59,7 +60,7 @@ const GET_REPOSITORY_QUERY = gql`
           publishedAt
         }
       }
-      pullRequests(last: 50) {
+      pullRequests(orderBy: {field: CREATED_AT, direction: ASC}, last: 50) {
         edges {
           node {
             id
@@ -79,19 +80,16 @@ const GET_REPOSITORY_QUERY = gql`
         target {
           ... on Commit {
             id
-            history(author: {}, first: 50, since: "2022-01-01T00:00:00Z") {
+            history(until: "2022-08-05T23:59:59Z", first: 50) {
               edges {
                 node {
-                  committedDate
-                  author {
-                    name
-                  }
+                  id
                   additions
-                  changedFiles
                   deletions
+                  changedFiles
+                  committedDate
                 }
               }
-              totalCount
             }
           }
         }
@@ -171,20 +169,15 @@ interface GetRepositoryQueryResponse {
     }
     defaultBranchRef: {
       target: {
-        id: string;
         history: {
           edges: {
             node: {
-              committedDate: string;
-              author: {
-                name: string;
-              }
               additions: number;
-              changedFiles: number;
               deletions: number;
+              changedFiles: number;
+              committedDate: string;
             }
           }[]
-          totalCount: number;
         }
       }
     }
@@ -195,10 +188,11 @@ interface GetRepositoryQueryResponse {
 }
 
 export function Repository() {
+  const { user, repository } = useParams();
   const { data, loading, error, refetch, networkStatus, fetchMore } = useQuery<GetRepositoryQueryResponse>(GET_REPOSITORY_QUERY, {
     variables: {
-      name: "github-readme-stats", 
-      owner: "anuraghazra",
+      name: repository, 
+      owner: user,
       after: null
     },
     notifyOnNetworkStatusChange: true
@@ -219,7 +213,7 @@ export function Repository() {
   }
 
   const currentCollaboratorsAmount = data?.repository?.mentionableUsers?.nodes.length;
-  const totalCollaboratorsAmount = data?.repository?.mentionableUsers?.totalCount
+  const totalCollaboratorsAmount = data?.repository?.mentionableUsers?.totalCount;
 
     return (
         <div className="flex items-center justify-center w-full min-h-screen bg-black-100">
