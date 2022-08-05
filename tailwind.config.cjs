@@ -20,6 +20,10 @@ module.exports = {
           '0%': { opacity: 0, transform: 'translateX(-2rem)' },
           '100': { opacity: 1, transform: 'translateX(0rem)' },
         },
+        rotate: {
+          '0%%': {transform: 'rotate(0deg)'},
+          '100%': {transform: 'rotate(360deg)'},
+        },
       },
       fontFamily: {
         sans: 'Poppins, sans-serif',
