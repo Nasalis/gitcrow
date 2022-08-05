@@ -5,6 +5,7 @@ const GET_USER_QUERY = gql`
     query getUserData($login: String!) {
         user(login: $login) {
             name
+            login
             avatarUrl
             contributionsCollection(
                 from: "2022-01-01T00:00:00Z"
@@ -75,6 +76,7 @@ export interface Repository {
 export interface GetUserDataResponse {
     user: {
         name: string;
+        login: string;
         avatarUrl: string;
         contributionsCollection: {
             totalCommitContributions: number;
