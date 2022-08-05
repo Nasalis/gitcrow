@@ -1,5 +1,6 @@
 import { BookmarksSimple, ClockCounterClockwise, GitPullRequest, Star } from "phosphor-react";
 import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 import { CardUserInfo } from "../components/CardUserInfo";
 import { ContributionChart } from "../components/ContributionChart";
 import { RepositoryCard } from "../components/RepositoryCard";
@@ -105,7 +106,9 @@ export function ProfileScreen({userData}: Props) {
                     </div>
                     <ul className="flex flex-wrap items-center justify-center gap-3  py-2 h-60 overflow-auto">
                         {userData !== undefined && userData.user.repositories.nodes.map(repo => (
-                            <RepositoryCard key={repo.id} repository={repo}/>
+                            <Link to={`/repository/${userData.user.login}/${repo.name}`}>
+                                <RepositoryCard key={repo.id} repository={repo}/>
+                            </Link>
                         ))}
                     </ul>
                 </section>
