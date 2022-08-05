@@ -1,6 +1,9 @@
-import { gql, useQuery } from "@apollo/client";
+import { gql, NetworkStatus, useQuery } from "@apollo/client";
 import { CaretDown, CaretRight } from "phosphor-react";
+import { CommitsHistory } from "../components/CommitsHistory";
 import { ContributorItem } from "../components/ContributorItem";
+import { LoadIcon } from "../components/LoadIcon";
+import { PullRequestsChart } from "../components/PullRequestsChart";
 import { RepositoryLanguageChart } from "../components/RepositoryLanguageChart";
 import { formatDateTime } from "../utils/formatDate";
 
@@ -192,12 +195,13 @@ interface GetRepositoryQueryResponse {
 }
 
 export function Repository() {
-  const { data, fetchMore } = useQuery<GetRepositoryQueryResponse>(GET_REPOSITORY_QUERY, {
+  const { data, loading, error, refetch, networkStatus, fetchMore } = useQuery<GetRepositoryQueryResponse>(GET_REPOSITORY_QUERY, {
     variables: {
       name: "github-readme-stats", 
       owner: "anuraghazra",
       after: null
     },
+    notifyOnNetworkStatusChange: true
   });
 
   function getCollaboratosListPagination() {
@@ -214,6 +218,8 @@ export function Repository() {
     })
   }
 
+  const currentCollaboratorsAmount = data?.repository?.mentionableUsers?.nodes.length;
+  const totalCollaboratorsAmount = data?.repository?.mentionableUsers?.totalCount
 
     return (
         <div className="flex items-center justify-center w-full min-h-screen bg-black-100">
@@ -251,27 +257,37 @@ export function Repository() {
                         Contributors
                       </span>
                       <strong className="text-pink-100 font-bold">
-                        ({data?.repository?.mentionableUsers?.nodes.length} / {data?.repository?.mentionableUsers?.totalCount})
+                        ({currentCollaboratorsAmount} / {totalCollaboratorsAmount})
                       </strong>
                     </div>
                     <ul className="flex flex-col items-start gap-y-3 w-full h-56 overflow-auto">
-                        {data?.repository?.mentionableUsers?.nodes.map(collaborator => (
-                           <ContributorItem
-                             key={collaborator.id}
-                             collaborator={collaborator} 
-                           /> 
-                         ))}
-                       <li className="flex justify-center w-full h-10">
-                          <button 
-                            type="button"
-                            className="flex items-center justify-between py-1 px-3 gap-x-2 bg-purple-100 bg-opacity-50 rounded-md shadow-md text-white-100 font-bold tracking-wide hover:bg-opacity-40 transition-all" 
-                            onClick={() => getCollaboratosListPagination()}
-                          >
-                            Ver mais
-                            <CaretDown size={24} weight="fill" />
-                          </button>
-                        </li>
+                      {data?.repository?.mentionableUsers?.nodes.map(collaborator => (
+                          <ContributorItem
+                            key={collaborator.id}
+                            collaborator={collaborator} 
+                          /> 
+                        ))}
                     </ul>
+                    <div className="flex justify-center w-full h-full">
+                      {loading ? (
+                          <LoadIcon/>
+                        ) : (
+                          currentCollaboratorsAmount === totalCollaboratorsAmount ? (
+                            <span className="max-w-[150px] text-white-100 text-sm text-center font-semibold animate-[wiggle_0.5s_ease-in]">
+                              All collaborators has benn listed!
+                            </span>
+                          ) : (
+                            <button 
+                              type="button"
+                              className="flex items-center justify-between py-1 px-3 gap-x-2 bg-purple-100 bg-opacity-50 rounded-md shadow-md text-white-100 font-bold tracking-wide hover:bg-opacity-40 transition-all" 
+                              onClick={() => getCollaboratosListPagination()}
+                            >
+                              Ver mais
+                              <CaretDown size={24} weight="fill" />
+                            </button>
+                          )
+                      )}
+                    </div>
                 </aside>
                 <div className="grid col-start-5 col-end-13 bg-black-300 gap-5 p-10">
                   <h2 className="text-white-100 text-opacity-75 text-xl font-bold">
@@ -281,11 +297,35 @@ export function Repository() {
                     <h3 className="text-white-100 text-opacity-75 text-lg font-bold">
                       Languages
                     </h3>
-                    <div className="h-64 mb-10">
+                    <div className="h-64 w-full mb-10">
                       <RepositoryLanguageChart 
                         languages={data?.repository.languages?.edges!}
                         totalValue={data?.repository.languages?.totalSize!}
                       />
+                    </div>
+                  </div>
+                  <div>
+                    <h3 className="text-white-100 text-opacity-75 text-lg font-bold">
+                      Pull Requests History
+                    </h3>
+                    <div className="h-64 w-full mb-10">
+                      {loading ? (
+                        <LoadIcon/>
+                      ) : (
+                        <PullRequestsChart pullRequests={data?.repository!?.pullRequests!?.edges!}/>
+                      )}
+                    </div>
+                  </div>
+                  <div>
+                    <h3 className="text-white-100 text-opacity-75 text-lg font-bold">
+                      Commits History
+                    </h3>
+                    <div className="h-64 w-full mb-10">
+                      {loading ? (
+                        <LoadIcon/>
+                      ) : (
+                        <CommitsHistory repositoryCommits={data?.repository!?.defaultBranchRef!?.target!?.history!?.edges!}/>
+                      )}
                     </div>
                   </div>
                 </div>
