@@ -1,5 +1,6 @@
 import { Line, LineConfig } from "@ant-design/charts";
 import { Contribution } from "../contexts/SearchBarContext";
+import { darkThemeChart } from "../utils/darkThemeChartConfig";
 
 interface Props {
     data: Contribution[]
@@ -8,6 +9,7 @@ interface Props {
 export function ContributionChart({data}: Props) {
     const config: LineConfig = {
         data,
+        theme: darkThemeChart, 
         padding: 'auto',
         xField: 'date',
         yField: 'contributionCount',
