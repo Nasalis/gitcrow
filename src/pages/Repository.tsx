@@ -1,11 +1,12 @@
 import { gql, NetworkStatus, useQuery } from "@apollo/client";
-import { CaretDown, CaretRight } from "phosphor-react";
+import { CaretDown, CaretRight, Eye, Star, UsersThree } from "phosphor-react";
 import { useParams } from "react-router-dom";
 import { CommitsHistory } from "../components/CommitsHistory";
 import { ContributorItem } from "../components/ContributorItem";
 import { LoadIcon } from "../components/LoadIcon";
 import { PullRequestsChart } from "../components/PullRequestsChart";
 import { RepositoryLanguageChart } from "../components/RepositoryLanguageChart";
+import { formatAmountToGreatValues } from "../utils/formatAmountInfo";
 import { formatDateTime } from "../utils/formatDate";
 
 const GET_REPOSITORY_QUERY = gql`
@@ -226,9 +227,20 @@ export function Repository() {
                               {data?.repository.name}
                             </h1>
                         </div>
-                        <small className="text-xs text-green-100 font-bold">
-                          {formatDateTime(data?.repository.createdAt ? new Date(data?.repository.createdAt) : new Date())}
-                        </small>
+                        <div className="grid gap-y-3">
+                          <small className="text-xs text-green-100 font-bold">
+                            {formatDateTime(new Date(data?.repository?.createdAt!))}
+                          </small>
+                          <div>
+                            <span className="text-white-100 text-xs text-opacity-75 font-bold mr-2">
+                              Last update:
+                            </span>
+                            <small className="text-xs text-green-100 font-bold">
+                             {formatDateTime( new Date(data?.repository?.updatedAt!))}
+                            </small>
+                          </div>
+                          
+                        </div>
                     </div>
                     <div className="flex flex-col items-start gap-y-3">
                         <span className="text-white-100 text-base font-semibold">
@@ -246,8 +258,37 @@ export function Repository() {
                           {data?.repository.owner?.name}
                         </span>
                     </div>
+                    <div className="flex items-center justify-between  w-full">
+                      <div className="grid place-items-center gap-1 p-2 w-24">
+                        <Eye size={24} weight="bold" color="#8EC07C"/>
+                        <small className="text-green-100 text-sm text-center font-bold">
+                          Visibility
+                        </small>
+                        <small className="text-orange-100 text-sm text-center font-bold">
+                          Public
+                        </small>
+                      </div>
+                      <div className="grid place-items-center gap-1 p-2 w-24">
+                        <UsersThree size={24} weight="bold" color="#8EC07C"/>
+                        <small className="text-green-100 text-sm font-bold text-center">
+                          Watchers
+                        </small>
+                        <small className="text-orange-100 text-sm font-bold text-center">
+                          {formatAmountToGreatValues(data?.repository?.watchers?.totalCount!)}
+                        </small>
+                      </div>
+                      <div className="grid place-items-center gap-1 p-2 w-24">
+                        <Star size={24} weight="bold" color="#8EC07C"/>
+                        <small className="text-green-100 text-sm text-center font-bold">
+                          Stars
+                        </small>
+                        <small className="text-orange-100 text-sm font-bold text-center w-24">
+                          {formatAmountToGreatValues(data?.repository?.stargazerCount!)}
+                        </small>
+                      </div>
+                    </div>
                     <div>
-                      <span className="text-white-100 text-base font-medium mr-1">
+                      <span className="text-white-100 text-base text-center font-medium mr-1">
                         Contributors
                       </span>
                       <strong className="text-pink-100 font-bold">
