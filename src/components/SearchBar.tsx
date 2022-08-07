@@ -1,10 +1,11 @@
 import { MagnifyingGlass } from "phosphor-react"
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { useSearchBar } from "../contexts/SearchBarContext"
 import { Logo } from "./Logo"
 
 export function SearchBar() {
-
+    const navigate = useNavigate();
     const [input, setInput] = useState("");
 
     const {
@@ -28,7 +29,10 @@ export function SearchBar() {
                 />
                 <button 
                     className="w-full sm/2:max-w-sm h-12 flex items-center justify-center bg-purple-100 bg-opacity-50 rounded-md shadow-md text-white-100 font-bold tracking-wide hover:bg-opacity-40 transition-all"
-                    onClick={() => getUserData(input)}
+                    onClick={() => { 
+                        getUserData(input)
+                        navigate("/")
+                    }}
                 >
                     Search
                 </button>

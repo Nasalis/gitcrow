@@ -22,22 +22,29 @@ function formatMessageToTimeLessThanOneMonth(value: number, typeTime: TypeTime) 
 }
 
 function makeMessageBasedInTime(difference: number, repoDate: Date) {
-    let days = Math.floor(difference / (1000 * 3600 * 24));
+    let hours = difference / (1000 * 3600);
+    let days = difference / (1000 * 3600 * 24)
+    let floorHoursValue = ~~hours;
+    let floorDaysValue = ~~days;
+    let floorWeeksValue = ~~(days / 7);
 
-    if (days < 7) {
-        return formatMessageToTimeLessThanOneMonth(days, days === 1 ? "day" : "days");
+    if (floorHoursValue < 24) {
+        return `Updated today ${(hours).toFixed()} hours ago`
     }
-    if (Math.floor(days / 7) < 4) {
-        let weeks = Math.floor(days / 7);
-        return formatMessageToTimeLessThanOneMonth(weeks, weeks === 1 ? "week" : "weeks");
+    if (floorDaysValue < 7) {
+        return formatMessageToTimeLessThanOneMonth(floorDaysValue, floorDaysValue === 1 ? "day" : "days");
     }
-    return `Updated  on ${formatDateTime(repoDate)}`;
+    if (floorWeeksValue < 4) {
+        return formatMessageToTimeLessThanOneMonth(floorWeeksValue, floorWeeksValue === 1 ? "week" : "weeks");
+    }
+    return `Updated on ${formatDateTime(repoDate)}`;
 };
 
-export function formatUpdatedDate(date: string) {
+export function formatUpdatedDate(updateDate: string) {
+    let repoDate = new Date(updateDate)
     let currentDate = new Date();
-    let repoDate = new Date(date);
-    let difference = currentDate.getTime() - repoDate.getTime();
-
+    let userTimezoneOffset = currentDate.getTimezoneOffset() * 60000;
+    let difference = (currentDate.getTime() + userTimezoneOffset) - (repoDate.getTime())
+    
     return makeMessageBasedInTime(difference, repoDate);
 }

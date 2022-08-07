@@ -1,5 +1,5 @@
 import { ReactElement } from "react";
-import { formatAmountInfo } from "../utils/formatAmountInfo";
+import { padStringForAmountInfo } from "../utils/formatAmountInfo";
 
 interface Props {
     icon: ReactElement<any, any>;
@@ -18,7 +18,7 @@ export function CardUserInfo({icon, title, content}: Props) {
                     </span>
                 </>
             </header>
-            <footer className="text-base font-normal text-white-200">{formatAmountInfo(content)}</footer>
+            <footer className="text-base font-normal text-white-200">{padStringForAmountInfo(content)}</footer>
         </div>
     )
 }
