@@ -229,14 +229,14 @@ export function Repository() {
                         </div>
                         <div className="grid gap-y-3">
                           <small className="text-xs text-green-100 font-bold">
-                            {formatDateTime(new Date(data?.repository?.createdAt!))}
+                            {formatDateTime(data?.repository?.createdAt ? new Date(data?.repository?.createdAt!) : new Date())}
                           </small>
                           <div>
                             <span className="text-white-100 text-xs text-opacity-75 font-bold mr-2">
                               Last update:
                             </span>
                             <small className="text-xs text-green-100 font-bold">
-                             {formatDateTime( new Date(data?.repository?.updatedAt!))}
+                             {formatDateTime(data?.repository?.updatedAt ? new Date(data?.repository?.updatedAt!) : new Date())}
                             </small>
                           </div>
                           
@@ -344,7 +344,7 @@ export function Repository() {
                       Pull Requests History
                     </h3>
                     <div className="h-64 w-full mb-10">
-                      {loading ? (
+                      {!data ? (
                         <LoadIcon/>
                       ) : (
                         <PullRequestsChart pullRequests={data?.repository!?.pullRequests!?.edges!}/>
@@ -356,7 +356,7 @@ export function Repository() {
                       Commits History
                     </h3>
                     <div className="h-64 w-full mb-10">
-                      {loading ? (
+                      {!data ? (
                         <LoadIcon/>
                       ) : (
                         <CommitsHistory repositoryCommits={data?.repository!?.defaultBranchRef!?.target!?.history!?.edges!}/>
