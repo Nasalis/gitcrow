@@ -7,6 +7,7 @@ interface Repository {
     name: string;
     id: string;
     updatedAt: string;
+    pushedAt: string;
     description: string | null;
 }
 
@@ -24,7 +25,7 @@ export function RepositoryCard({repository}: Props) {
                     {repository.description ? repository.description : "No description"}
                 </p>
                 <footer className="flex items-center gap-3 w-full">
-                    <small className="text-[0.625rem] font-medium text-green-100">{formatUpdatedDate(repository.updatedAt)}</small>
+                    <small className="text-[0.625rem] font-medium text-green-100">{formatUpdatedDate(repository.pushedAt)}</small>
                     <small className="text-[0.625rem] font-medium text-pink-100">{repository?.primaryLanguage?.name}</small>
                 </footer>
             </div>

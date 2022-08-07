@@ -29,6 +29,7 @@ const GET_REPOSITORY_QUERY = gql`
         }
       }
       updatedAt
+      pushedAt
       stargazerCount
       name
       description
@@ -122,6 +123,7 @@ interface GetRepositoryQueryResponse {
       }[]
     }
     createdAt: string;
+    pushedAt: string;
     updatedAt: string;
     stargazerCount: number;
     name: string;
@@ -237,6 +239,14 @@ export function Repository() {
                             </span>
                             <small className="text-xs text-green-100 font-bold">
                              {formatDateTime(data?.repository?.updatedAt ? new Date(data?.repository?.updatedAt!) : new Date())}
+                            </small>
+                          </div>
+                          <div>
+                            <span className="text-white-100 text-xs text-opacity-75 font-bold mr-2">
+                              Last pushed commit:
+                            </span>
+                            <small className="text-xs text-green-100 font-bold">
+                              {formatDateTime(data?.repository?.updatedAt ? new Date(data?.repository?.pushedAt!) : new Date())}
                             </small>
                           </div>
                           
