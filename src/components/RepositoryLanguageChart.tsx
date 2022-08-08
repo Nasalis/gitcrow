@@ -43,7 +43,7 @@ export function RepositoryLanguageChart({languages, totalValue}: Props) {
         appendPadding: 10,
         angleField: 'value',
         colorField: 'name',
-        color: languages?.map(language => language.node.color),  
+        color: languages?.map(language => language.node.color ? language.node.color : "#39d353"),  
         radius: 1,
         innerRadius: 0.6,
         label: {
