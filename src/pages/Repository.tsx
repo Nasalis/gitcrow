@@ -257,7 +257,7 @@ export function Repository() {
                         About
                       </span>
                       <p className="text-white-100 text-opacity-75 text-sm text-center sm/3:text-left font-medium">
-                        {data?.repository.description}
+                        {data?.repository.description! ?? "No description"}
                       </p>
                   </div>
                   <div className="flex flex-col sm/3:flex-row items-center gap-x-3">
