@@ -221,159 +221,168 @@ export function Repository() {
     return (
         <div className="flex items-center justify-center w-full min-h-screen bg-black-100">
             <main className="grid grid-cols-12 grid-rows-1 items-start gap-y-4 mb-4 justify-center">
-                <aside className="relative flex flex-col items-start justify-center gap-y-6 w-[23.125rem] xl:col-start-1 xl:col-end-4 bg-black-300 shadow-md rounded-xl p-10">
-                    <div>
-                        <div className="flex items-center gap-x-1">
-                            <CaretRight weight="bold" size={20} color="#ffffff"/>
-                            <h1 className="text-xl font-bold text-white-100">
-                              {data?.repository.name}
-                            </h1>
-                        </div>
-                        <div className="grid gap-y-3">
+                <aside className="grid gap-y-6 w-full col-start-1 col-end-13 row-start-1 row-end-1 lg:relative lg:flex lg:flex-col lg:items-start lg:justify-center xl:w-[23.125rem] xl:col-start-1 xl:col-end-4 bg-black-300 shadow-md rounded-xl p-10">
+                  <div className="w-full">
+                      <div className="flex items-center gap-x-1">
+                          <CaretRight weight="bold" size={20} color="#ffffff" className="hidden sm/3:block"/>
+                          <h1 className="text-2xl sm/3:text-xl font-bold text-white-100 text-center sm/3:text-left w-full">
+                            {data?.repository.name}
+                          </h1>
+                      </div>
+                      <div className="grid gap-y-3 mt-3">
+                        <small className="text-xs text-green-100 font-bold text-center sm/3:text-left">
+                          {formatDateTime(data?.repository?.createdAt ? new Date(data?.repository?.createdAt!) : new Date())}
+                        </small>
+                        <div className="flex flex-col my-3 sm/3:my-0 sm/3:flex-row items-center sm/3:items-start gap-2">
+                          <span className="text-white-100 text-xs text-opacity-75 font-bold mr-0 sm/3:mr-2">
+                            Last update:
+                          </span>
                           <small className="text-xs text-green-100 font-bold">
-                            {formatDateTime(data?.repository?.createdAt ? new Date(data?.repository?.createdAt!) : new Date())}
+                            {formatDateTime(data?.repository?.updatedAt ? new Date(data?.repository?.updatedAt!) : new Date())}
                           </small>
-                          <div>
-                            <span className="text-white-100 text-xs text-opacity-75 font-bold mr-2">
-                              Last update:
-                            </span>
-                            <small className="text-xs text-green-100 font-bold">
-                             {formatDateTime(data?.repository?.updatedAt ? new Date(data?.repository?.updatedAt!) : new Date())}
-                            </small>
-                          </div>
-                          <div>
-                            <span className="text-white-100 text-xs text-opacity-75 font-bold mr-2">
-                              Last pushed commit:
-                            </span>
-                            <small className="text-xs text-green-100 font-bold">
-                              {formatDateTime(data?.repository?.updatedAt ? new Date(data?.repository?.pushedAt!) : new Date())}
-                            </small>
-                          </div>
-                          
                         </div>
-                    </div>
-                    <div className="flex flex-col items-start gap-y-3">
-                        <span className="text-white-100 text-base font-semibold">
-                          About
-                        </span>
-                        <p className="text-white-100 text-opacity-75 text-sm font-medium">
-                          {data?.repository.description}
-                        </p>
-                    </div>
-                    <div className="flex items-center gap-x-3">
-                        <span className="text-white-100 text-base font-semibold">
-                          Owner:
-                        </span>
-                        <span className="text-white-100 text-base font-semilbold">
-                          {data?.repository.owner?.name}
-                        </span>
-                    </div>
-                    <div className="flex items-center justify-between  w-full">
-                      <div className="grid place-items-center gap-1 p-2 w-24">
-                        <Eye size={24} weight="bold" color="#8EC07C"/>
-                        <small className="text-green-100 text-sm text-center font-bold">
-                          Visibility
-                        </small>
-                        <small className="text-orange-100 text-sm text-center font-bold">
-                          Public
-                        </small>
+                        <div className="flex flex-col my-3 sm/3:my-0 sm/3:flex-row items-center sm/3:items-start gap-2">
+                          <span className="text-white-100 text-xs text-opacity-75 font-bold mr-0 sm/3:mr-2">
+                            Last pushed commit:
+                          </span>
+                          <small className="text-xs text-green-100 font-bold">
+                            {formatDateTime(data?.repository?.updatedAt ? new Date(data?.repository?.pushedAt!) : new Date())}
+                          </small>
+                        </div>
+                        
                       </div>
-                      <div className="grid place-items-center gap-1 p-2 w-24">
-                        <UsersThree size={24} weight="bold" color="#8EC07C"/>
-                        <small className="text-green-100 text-sm font-bold text-center">
-                          Watchers
-                        </small>
-                        <small className="text-orange-100 text-sm font-bold text-center">
-                          {formatAmountToGreatValues(data?.repository?.watchers?.totalCount!)}
-                        </small>
-                      </div>
-                      <div className="grid place-items-center gap-1 p-2 w-24">
-                        <Star size={24} weight="bold" color="#8EC07C"/>
-                        <small className="text-green-100 text-sm text-center font-bold">
-                          Stars
-                        </small>
-                        <small className="text-orange-100 text-sm font-bold text-center w-24">
-                          {formatAmountToGreatValues(data?.repository?.stargazerCount!)}
-                        </small>
-                      </div>
-                    </div>
-                    <div>
-                      <span className="text-white-100 text-base text-center font-medium mr-1">
-                        Contributors
+                  </div>
+                  <div className="flex flex-col items-start gap-y-3 w-full">
+                      <span className="text-white-100 text-base text-center sm/3:text-left font-semibold w-full">
+                        About
                       </span>
-                      <strong className="text-pink-100 font-bold">
-                        ({currentCollaboratorsAmount} / {totalCollaboratorsAmount})
-                      </strong>
+                      <p className="text-white-100 text-opacity-75 text-sm text-center sm/3:text-left font-medium">
+                        {data?.repository.description}
+                      </p>
+                  </div>
+                  <div className="flex flex-col sm/3:flex-row items-center gap-x-3">
+                      <span className="text-white-100 text-base font-semibold">
+                        Owner:
+                      </span>
+                      <span className="text-white-100 text-base text-center sm/3:text-left font-semilbold">
+                        {data?.repository.owner?.name}
+                      </span>
+                  </div>
+                  <div className="flex flex-col items-center justify-center w-full sm/2:flex-row sm/2:justify-between">
+                    <div className="grid place-items-center gap-1 p-2 w-24">
+                      <Eye size={24} weight="bold" color="#8EC07C"/>
+                      <small className="text-green-100 text-sm text-center font-bold">
+                        Visibility
+                      </small>
+                      <small className="text-orange-100 text-sm font-bold text-center">
+                        Public
+                      </small>
                     </div>
-                    <ul className="flex flex-col items-start gap-y-3 w-full h-56 overflow-auto">
-                      {data?.repository?.mentionableUsers?.nodes.map(collaborator => (
-                          <ContributorItem
-                            key={collaborator.id}
-                            collaborator={collaborator} 
-                          /> 
-                        ))}
-                    </ul>
-                    <div className="flex justify-center w-full h-full">
-                      {loading ? (
-                          <LoadIcon/>
+                    <div className="grid place-items-center gap-1 p-2 w-24">
+                      <UsersThree size={24} weight="bold" color="#8EC07C"/>
+                      <small className="text-green-100 text-sm font-bold text-center">
+                        Watchers
+                      </small>
+                      <small className="text-orange-100 text-sm font-bold text-center">
+                        {formatAmountToGreatValues(data?.repository?.watchers?.totalCount!)}
+                      </small>
+                    </div>
+                    <div className="grid place-items-center gap-1 p-2 w-24">
+                      <Star size={24} weight="bold" color="#8EC07C"/>
+                      <small className="text-green-100 text-sm text-center font-bold">
+                        Stars
+                      </small>
+                      <small className="text-orange-100 text-sm font-bold text-center">
+                        {formatAmountToGreatValues(data?.repository?.stargazerCount!)}
+                      </small>
+                    </div>
+                  </div>
+                  <div>
+                    <span className="text-white-100 text-base text-center font-medium mr-1">
+                      Contributors
+                    </span>
+                    <strong className="text-pink-100 font-bold">
+                      ({currentCollaboratorsAmount} / {totalCollaboratorsAmount})
+                    </strong>
+                  </div>
+                  <ul className="flex flex-col items-start gap-y-3 w-full h-56 overflow-auto">
+                    {data?.repository?.mentionableUsers?.nodes.map(collaborator => (
+                        <ContributorItem
+                          key={collaborator.id}
+                          collaborator={collaborator} 
+                        /> 
+                      ))}
+                  </ul>
+                  <div className="flex justify-center w-full h-full">
+                    {loading ? (
+                        <LoadIcon/>
+                      ) : (
+                        currentCollaboratorsAmount === totalCollaboratorsAmount ? (
+                          <span className="max-w-[150px] text-white-100 text-sm text-center font-semibold animate-[wiggle_0.5s_ease-in]">
+                            All collaborators has benn listed!
+                          </span>
                         ) : (
-                          currentCollaboratorsAmount === totalCollaboratorsAmount ? (
-                            <span className="max-w-[150px] text-white-100 text-sm text-center font-semibold animate-[wiggle_0.5s_ease-in]">
-                              All collaborators has benn listed!
-                            </span>
-                          ) : (
-                            <button 
-                              type="button"
-                              className="flex items-center justify-between py-1 px-3 gap-x-2 bg-purple-100 bg-opacity-50 rounded-md shadow-md text-white-100 font-bold tracking-wide hover:bg-opacity-40 transition-all" 
-                              onClick={() => getCollaboratosListPagination()}
-                            >
-                              Ver mais
-                              <CaretDown size={24} weight="fill" />
-                            </button>
-                          )
-                      )}
-                    </div>
+                          <button 
+                            type="button"
+                            className="flex items-center justify-between py-1 px-3 gap-x-2 bg-purple-100 bg-opacity-50 rounded-md shadow-md text-white-100 font-bold tracking-wide hover:bg-opacity-40 transition-all" 
+                            onClick={() => getCollaboratosListPagination()}
+                          >
+                            Ver mais
+                            <CaretDown size={24} weight="fill" />
+                          </button>
+                        )
+                    )}
+                  </div>
                 </aside>
-                <div className="grid col-start-5 col-end-13 bg-black-300 gap-5 p-10">
-                  <h2 className="text-white-100 text-opacity-75 text-xl font-bold">
-                    Repository informations
-                  </h2>
-                  <div>
-                    <h3 className="text-white-100 text-opacity-75 text-lg font-bold">
-                      Languages
-                    </h3>
-                    <div className="h-64 w-full mb-10">
-                      <RepositoryLanguageChart 
-                        languages={data?.repository.languages?.edges!}
-                        totalValue={data?.repository.languages?.totalSize!}
-                      />
-                    </div>
-                  </div>
-                  <div>
-                    <h3 className="text-white-100 text-opacity-75 text-lg font-bold">
-                      Pull Requests History
-                    </h3>
-                    <div className="h-64 w-full mb-10">
-                      {!data ? (
-                        <LoadIcon/>
-                      ) : (
-                        <PullRequestsChart pullRequests={data?.repository!?.pullRequests!?.edges!}/>
-                      )}
-                    </div>
-                  </div>
-                  <div>
-                    <h3 className="text-white-100 text-opacity-75 text-lg font-bold">
-                      Commits History
-                    </h3>
-                    <div className="h-64 w-full mb-10">
-                      {!data ? (
-                        <LoadIcon/>
-                      ) : (
-                        <CommitsHistory repositoryCommits={data?.repository!?.defaultBranchRef!?.target!?.history!?.edges!}/>
-                      )}
-                    </div>
-                  </div>
-                </div>
+                {!data ? (
+                  <section className="grid col-start-1 col-end-13 xl:col-start-5 xl:col-end-13 row-start-2 row-end-3 xl:row-start-1 xl:row-end-3 self-stretch px-8 py-6 border border-purple-100">
+                    <div className="rounded-full w-1/4 bg-purple-100 opacity-70 h-3 mb-8"></div>
+                    <div className="h-64 w-full rounded-2xl mb-10 border border-purple-100 opacity-70"></div>
+                    <div className="h-64 w-full rounded-2xl mb-10 border border-purple-100 opacity-70"></div>
+                    <div className="h-64 w-full rounded-2xl mb-10 border border-purple-100 opacity-70"></div>
+                  </section>
+                ) : (
+                  <section className="col-start-1 col-end-13 xl:col-start-5 xl:col-end-13 row-start-2 row-end-3 xl:row-start-1 xl:row-end-3 self-stretch px-8 py-6 bg-black-300">
+                      <h2 className="text-white-100 text-opacity-75 text-xl font-bold">
+                        Repository informations
+                      </h2>
+                     <div className="w-full">
+                       <h3 className="text-white-100 text-opacity-75 text-lg font-bold">
+                         Languages
+                       </h3>
+                       <div className="h-64 mb-10">
+                         <RepositoryLanguageChart 
+                           languages={data?.repository.languages?.edges!}
+                           totalValue={data?.repository.languages?.totalSize!}
+                         />
+                       </div>
+                     </div>
+                     <div className="w-full">
+                       <h3 className="text-white-100 text-opacity-75 text-lg font-bold">
+                         Pull Requests History
+                       </h3>
+                       <div className="h-64 mb-10">
+                         {!data ? (
+                           <LoadIcon/>
+                         ) : (
+                           <PullRequestsChart pullRequests={data?.repository!?.pullRequests!?.edges!}/>
+                         )}
+                       </div>
+                     </div>
+                     <div className="w-full">
+                       <h3 className="text-white-100 text-opacity-75 text-lg font-bold">
+                         Commits History
+                       </h3>
+                       <div className="h-64 mb-10">
+                         {!data ? (
+                           <LoadIcon/>
+                         ) : (
+                           <CommitsHistory repositoryCommits={data?.repository!?.defaultBranchRef!?.target!?.history!?.edges!}/>
+                         )}
+                       </div>
+                     </div>
+                  </section>
+                )}
             </main>
         </div>
     )
