@@ -36,7 +36,7 @@ export function ProfileScreen({userData}: Props) {
             .then(setAllContributions)
         }
         getContributions();
-    }, [])
+    }, [userData])
 
     const cadsUserInfo = [
         <CardUserInfo 
