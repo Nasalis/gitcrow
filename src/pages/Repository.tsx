@@ -346,22 +346,22 @@ export function Repository() {
                       <h2 className="text-white-100 text-opacity-75 text-xl font-bold">
                         Repository informations
                       </h2>
-                     <div className="w-full">
+                     <div className="flex flex-col items-center justify-center w-full">
                        <h3 className="text-white-100 text-opacity-75 text-lg font-bold">
                          Languages
                        </h3>
-                       <div className="h-64 mb-10">
+                       <div className="h-64 w-full mb-10">
                          <RepositoryLanguageChart 
                            languages={data?.repository.languages?.edges!}
                            totalValue={data?.repository.languages?.totalSize!}
                          />
                        </div>
                      </div>
-                     <div className="w-full">
+                     <div className="flex flex-col items-center justify-center w-full">
                        <h3 className="text-white-100 text-opacity-75 text-lg font-bold">
                          Pull Requests History
                        </h3>
-                       <div className="h-64 mb-10">
+                       <div className="h-64 w-full mb-10">
                          {!data ? (
                            <LoadIcon/>
                          ) : (
@@ -369,11 +369,11 @@ export function Repository() {
                          )}
                        </div>
                      </div>
-                     <div className="w-full">
+                     <div className="flex flex-col items-center justify-center w-full">
                        <h3 className="text-white-100 text-opacity-75 text-lg font-bold">
                          Commits History
                        </h3>
-                       <div className="h-64 mb-10">
+                       <div className="h-64 w-full mb-10">
                          {!data ? (
                            <LoadIcon/>
                          ) : (
