@@ -1,5 +1,5 @@
 import { ProfileScreen } from "../components/ProfileScreen";
-import { ProfileScreenLoading } from "../components/ProfileScreenLoading";
+import { ProfileScreenLoading } from "../components/Loading/ProfileScreenLoading";
 import { useSearchBar } from "../contexts/SearchBarContext";
 import Error404Video from "./../assets/404 error lost in space.mp4";
 

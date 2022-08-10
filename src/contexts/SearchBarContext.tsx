@@ -41,6 +41,7 @@ const GET_USER_QUERY = gql`
                         }
                     }
                     updatedAt
+                    pushedAt
                     description
                     id
                 }   
@@ -70,6 +71,7 @@ export interface Repository {
     }
     id: string;
     updatedAt: string;
+    pushedAt: string;
     description: string | null;
     size: number;
 }
