@@ -39,16 +39,17 @@ interface Commit {
 
 interface Props {
     repositoryCommits: Commit[];
+    isDark: boolean;
 }
 
-export function CommitsHistory({repositoryCommits}: Props) {
+export function CommitsHistory({repositoryCommits, isDark}: Props) {
     let data: IDataProps[] = [];
 
     data = mergeCommitsByDate(repositoryCommits);
     
     const config: LineConfig = {
-        theme: darkThemeChart,
         data,
+        theme: isDark ? darkThemeChart : "light",
         xField: 'date',
         yField: 'value',
         seriesField: 'category',
