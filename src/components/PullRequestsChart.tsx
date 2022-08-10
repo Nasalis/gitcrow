@@ -39,17 +39,18 @@ interface PullRequest {
 }
 
 interface Props {
-    pullRequests: PullRequest[]
+    pullRequests: PullRequest[];
+    isDark: boolean;
 }
 
-export function PullRequestsChart({pullRequests}: Props) {
+export function PullRequestsChart({pullRequests, isDark}: Props) {
     let data: IDataProps[] = [];
 
     data = mergePullRequestsByDate(pullRequests);
     
     const config: LineConfig = {
-        theme: darkThemeChart,
         data,
+        theme: isDark ? darkThemeChart : "light",
         xField: 'date',
         yField: 'value',
         seriesField: 'category',

@@ -11,9 +11,10 @@ interface Props {
     size: number;
   }[]
   totalValue: number;
+  isDark: boolean;
 }
 
-export function RepositoryLanguageChart({languages, totalValue}: Props) {
+export function RepositoryLanguageChart({languages, totalValue, isDark}: Props) {
     const data = [
         {
           type: 'Typescript',
@@ -39,7 +40,7 @@ export function RepositoryLanguageChart({languages, totalValue}: Props) {
 
     const config: PieConfig = {
         data: data2 || data,
-        theme: darkThemeChart,
+        theme: isDark ? darkThemeChart : "light",
         appendPadding: 10,
         angleField: 'value',
         colorField: 'name',
@@ -68,7 +69,7 @@ export function RepositoryLanguageChart({languages, totalValue}: Props) {
             title: false,
             content: {
               style: {
-                color: "#ffffff",
+                color: isDark ? "#ffffff" : "#313131",
                 whiteSpace: 'pre-wrap',
                 overflow: 'hidden',
                 textOverflow: 'ellipsis',

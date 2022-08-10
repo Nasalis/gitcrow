@@ -108,6 +108,7 @@ export interface UserData {
 
 interface SearchBarContextData {
     data: GetUserDataResponse | undefined;
+    loading: boolean;
     getUserData(userName: string): Promise<QueryResult<GetUserDataResponse, OperationVariables>>
 }
 
@@ -120,8 +121,10 @@ export const SearchBarContext = createContext({} as SearchBarContextData);
 export function SearchBarContextProvider({
     children
 }: SearchBarContextProps) {
-    const [getUserInfo, { data }] = useLazyQuery<GetUserDataResponse>(GET_USER_QUERY)
-    const getUserData = (userName: string = "") => getUserInfo({variables: {login: userName === "" ? "Nasalis" : userName}})
+    const [getUserInfo, { data, loading }] = useLazyQuery<GetUserDataResponse>(GET_USER_QUERY, {
+        notifyOnNetworkStatusChange: true
+    })
+    const getUserData = (userName: string = "") => getUserInfo({variables: {login: userName === "" ? "octocat" : userName}})
 
     useEffect(() => {
         getUserData();
@@ -130,6 +133,7 @@ export function SearchBarContextProvider({
     return (
         <SearchBarContext.Provider value={{
             data,
+            loading,
             getUserData,
         }}>
             {children}

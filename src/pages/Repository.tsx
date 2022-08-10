@@ -7,6 +7,7 @@ import { LoadIcon } from "../components/LoadIcon";
 import { RepositoryAsideLoading } from "../components/Loading/RepositoryAsideLoading";
 import { PullRequestsChart } from "../components/PullRequestsChart";
 import { RepositoryLanguageChart } from "../components/RepositoryLanguageChart";
+import { useTheme } from "../contexts/ThemeContext";
 import { formatAmountToGreatValues } from "../utils/formatAmountInfo";
 import { formatDateTime } from "../utils/formatDate";
 
@@ -193,7 +194,7 @@ interface GetRepositoryQueryResponse {
 
 export function Repository() {
   const { user, repository } = useParams();
-  const { data, loading, error, refetch, networkStatus, fetchMore } = useQuery<GetRepositoryQueryResponse>(GET_REPOSITORY_QUERY, {
+  const { data, loading, fetchMore } = useQuery<GetRepositoryQueryResponse>(GET_REPOSITORY_QUERY, {
     variables: {
       name: repository, 
       owner: user,
@@ -201,6 +202,10 @@ export function Repository() {
     },
     notifyOnNetworkStatusChange: true
   });
+
+  const {
+    isDark
+  } = useTheme();
 
   function getCollaboratosListPagination() {
     const { endCursor } = data?.repository.mentionableUsers.pageInfo!
@@ -220,36 +225,36 @@ export function Repository() {
   const totalCollaboratorsAmount = data?.repository?.mentionableUsers?.totalCount;
 
     return (
-        <div className="flex items-center justify-center w-full min-h-screen bg-black-100">
+        <div className="flex items-center justify-center w-full min-h-screen bg-white-100 dark:bg-black-100">
             <main className="grid grid-cols-12 grid-rows-1 items-start gap-y-4 mb-4 justify-center">
               {!data ? (
                 <RepositoryAsideLoading/>
               ) : (
-                <aside className="grid gap-y-6 w-full col-start-1 col-end-13 row-start-1 row-end-1 lg:relative lg:flex lg:flex-col lg:items-start lg:justify-center xl:w-[23.125rem] xl:col-start-1 xl:col-end-4 bg-black-300 shadow-md rounded-xl p-10">
+                <aside className="grid gap-y-6 w-full col-start-1 col-end-13 row-start-1 row-end-1 lg:relative lg:flex lg:flex-col lg:items-start lg:justify-center xl:w-[23.125rem] xl:col-start-1 xl:col-end-4 bg-white-200 dark:bg-black-300 shadow-xl dark:shadow-md rounded-xl p-10">
                   <div className="w-full">
-                      <div className="flex items-center gap-x-1">
-                          <CaretRight weight="bold" size={20} color="#ffffff" className="hidden sm/3:block"/>
-                          <h1 className="text-2xl sm/3:text-xl font-bold text-white-100 text-center sm/3:text-left w-full">
+                      <div className="flex items-center text-black-300 dark:text-white-100 gap-x-1">
+                          <CaretRight weight="bold" size={20} className="hidden sm/3:block"/>
+                          <h1 className="text-2xl sm/3:text-xl font-bold text-center sm/3:text-left w-full">
                             {data?.repository.name}
                           </h1>
                       </div>
                       <div className="grid gap-y-3 mt-3">
-                        <small className="text-xs text-green-100 font-bold text-center sm/3:text-left">
+                        <small className="text-xs text-[#365A2B] dark:text-green-100 font-bold text-center sm/3:text-left">
                           {formatDateTime(data?.repository?.createdAt ? new Date(data?.repository?.createdAt!) : new Date())}
                         </small>
                         <div className="flex flex-col my-3 sm/3:my-0 sm/3:flex-row items-center sm/3:items-start gap-2">
-                          <span className="text-white-100 text-xs text-opacity-75 font-bold mr-0 sm/3:mr-2">
+                          <span className="text-black-100 dark:text-white-100 text-xs text-opacity-75 font-bold mr-0 sm/3:mr-2">
                             Last update:
                           </span>
-                          <small className="text-xs text-green-100 font-bold">
+                          <small className="text-xs text-[#365A2B] dark:text-green-100 font-bold">
                             {formatDateTime(data?.repository?.updatedAt ? new Date(data?.repository?.updatedAt!) : new Date())}
                           </small>
                         </div>
                         <div className="flex flex-col my-3 sm/3:my-0 sm/3:flex-row items-center sm/3:items-start gap-2">
-                          <span className="text-white-100 text-xs text-opacity-75 font-bold mr-0 sm/3:mr-2">
+                          <span className="text-black-100 dark:text-white-100 text-xs text-opacity-75 font-bold mr-0 sm/3:mr-2">
                             Last pushed commit:
                           </span>
-                          <small className="text-xs text-green-100 font-bold">
+                          <small className="text-xs text-[#365A2B] dark:text-green-100 font-bold">
                             {formatDateTime(data?.repository?.updatedAt ? new Date(data?.repository?.pushedAt!) : new Date())}
                           </small>
                         </div>
@@ -257,43 +262,43 @@ export function Repository() {
                       </div>
                   </div>
                   <div className="flex flex-col items-start gap-y-3 w-full">
-                      <span className="text-white-100 text-base text-center sm/3:text-left font-semibold w-full">
+                      <span className="text-black-100 dark:text-white-100 text-base text-center sm/3:text-left font-semibold w-full">
                         About
                       </span>
-                      <p className="text-white-100 text-opacity-75 text-sm text-center sm/3:text-left font-medium">
+                      <p className="text-black-100 dark:text-white-100 text-opacity-75 text-sm text-center sm/3:text-left font-medium">
                         {data?.repository.description! ?? "No description"}
                       </p>
                   </div>
                   <div className="flex flex-col sm/3:flex-row items-center gap-x-3">
-                      <span className="text-white-100 text-base font-semibold">
+                      <span className="text-black-100 dark:text-white-100 text-base font-semibold">
                         Owner:
                       </span>
-                      <span className="text-white-100 text-base text-center sm/3:text-left font-semilbold">
+                      <span className="text-black-100 dark:text-white-100 text-base text-center sm/3:text-left font-semilbold">
                         {data?.repository.owner?.name}
                       </span>
                   </div>
                   <div className="flex flex-col items-center justify-center w-full sm/2:flex-row sm/2:justify-between">
-                    <div className="grid place-items-center gap-1 p-2 w-24">
-                      <Eye size={24} weight="bold" color="#8EC07C"/>
-                      <small className="text-green-100 text-sm text-center font-bold">
+                    <div className="grid place-items-center text-[#365A2B] dark:text-green-100 gap-1 p-2 w-24">
+                      <Eye size={24} weight="bold"/>
+                      <small className="text-[#365A2B] dark:text-green-100 text-sm text-center font-bold">
                         Visibility
                       </small>
                       <small className="text-orange-100 text-sm font-bold text-center">
                         Public
                       </small>
                     </div>
-                    <div className="grid place-items-center gap-1 p-2 w-24">
-                      <UsersThree size={24} weight="bold" color="#8EC07C"/>
-                      <small className="text-green-100 text-sm font-bold text-center">
+                    <div className="grid place-items-center text-[#365A2B] dark:text-green-100 gap-1 p-2 w-24">
+                      <UsersThree size={24} weight="bold"/>
+                      <small className="text-[#365A2B] dark:text-green-100 text-sm font-bold text-center">
                         Watchers
                       </small>
                       <small className="text-orange-100 text-sm font-bold text-center">
                         {formatAmountToGreatValues(data?.repository?.watchers?.totalCount!)}
                       </small>
                     </div>
-                    <div className="grid place-items-center gap-1 p-2 w-24">
-                      <Star size={24} weight="bold" color="#8EC07C"/>
-                      <small className="text-green-100 text-sm text-center font-bold">
+                    <div className="grid place-items-center text-[#365A2B] dark:text-green-100 gap-1 p-2 w-24">
+                      <Star size={24} weight="bold"/>
+                      <small className="text-[#365A2B] dark:text-green-100 text-sm text-center font-bold">
                         Stars
                       </small>
                       <small className="text-orange-100 text-sm font-bold text-center">
@@ -302,10 +307,10 @@ export function Repository() {
                     </div>
                   </div>
                   <div>
-                    <span className="text-white-100 text-base text-center font-medium mr-1">
+                    <span className="text-black-100 dark:text-white-100 text-base text-center font-medium mr-1">
                       Contributors
                     </span>
-                    <strong className="text-pink-100 font-bold">
+                    <strong className="text-[#970C72] dark:text-pink-100 font-bold">
                       ({currentCollaboratorsAmount} / {totalCollaboratorsAmount})
                     </strong>
                   </div>
@@ -322,13 +327,13 @@ export function Repository() {
                         <LoadIcon/>
                       ) : (
                         currentCollaboratorsAmount === totalCollaboratorsAmount ? (
-                          <span className="max-w-[150px] text-white-100 text-sm text-center font-semibold animate-[wiggle_0.5s_ease-in]">
+                          <span className="max-w-[150px] text-black-100 dark:text-white-100 text-sm text-center font-semibold animate-[wiggle_0.5s_ease-in]">
                             All collaborators has benn listed!
                           </span>
                         ) : (
                           <button 
                             type="button"
-                            className="flex items-center justify-between py-1 px-3 gap-x-2 bg-purple-100 bg-opacity-50 rounded-md shadow-md text-white-100 font-bold tracking-wide hover:bg-opacity-40 transition-all" 
+                            className="flex items-center justify-between py-1 px-3 gap-x-2 bg-purple-100 bg-opacity-100 dark:bg-opacity-50 rounded-md shadow-md text-white-100 font-bold tracking-wide hover:bg-opacity-90 dark:hover:bg-opacity-40 transition-all" 
                             onClick={() => getCollaboratosListPagination()}
                           >
                             Ver mais
@@ -347,42 +352,49 @@ export function Repository() {
                     <div className="h-64 w-full rounded-2xl mb-10 border border-purple-100 opacity-70"></div>
                   </section>
                 ) : (
-                  <section className="col-start-1 col-end-13 xl:col-start-5 xl:col-end-13 row-start-2 row-end-3 xl:row-start-1 xl:row-end-3 self-stretch px-8 py-6 bg-black-300">
-                      <h2 className="text-white-100 text-opacity-75 text-xl font-bold">
+                  <section className="col-start-1 col-end-13 xl:col-start-5 xl:col-end-13 row-start-2 row-end-3 xl:row-start-1 xl:row-end-3 self-stretch px-8 py-6 bg-white-200 dark:bg-black-300 shadow-xl dark:shadow-none">
+                      <h2 className="text-black-100 dark:text-white-100 text-opacity-75 text-xl font-bold">
                         Repository informations
                       </h2>
                      <div className="flex flex-col items-center justify-center w-full">
-                       <h3 className="text-white-100 text-opacity-75 text-lg font-bold">
+                       <h3 className="text-black-100 dark:text-white-100 text-opacity-75 text-lg font-bold">
                          Languages
                        </h3>
                        <div className="h-64 w-full mb-10">
                          <RepositoryLanguageChart 
                            languages={data?.repository.languages?.edges!}
                            totalValue={data?.repository.languages?.totalSize!}
+                           isDark={isDark}
                          />
                        </div>
                      </div>
                      <div className="flex flex-col items-center justify-center w-full">
-                       <h3 className="text-white-100 text-opacity-75 text-lg font-bold">
+                       <h3 className="text-black-100 dark:text-white-100 text-opacity-75 text-lg font-bold">
                          Pull Requests History
                        </h3>
                        <div className="h-64 w-full mb-10">
                          {!data ? (
                            <LoadIcon/>
                          ) : (
-                           <PullRequestsChart pullRequests={data?.repository!?.pullRequests!?.edges!}/>
+                          <PullRequestsChart 
+                              pullRequests={data?.repository!?.pullRequests!?.edges!}
+                              isDark={isDark}
+                          />
                          )}
                        </div>
                      </div>
                      <div className="flex flex-col items-center justify-center w-full">
-                       <h3 className="text-white-100 text-opacity-75 text-lg font-bold">
+                       <h3 className="text-black-100 dark:text-white-100 text-opacity-75 text-lg font-bold">
                          Commits History
                        </h3>
                        <div className="h-64 w-full mb-10">
                          {!data ? (
                            <LoadIcon/>
                          ) : (
-                           <CommitsHistory repositoryCommits={data?.repository!?.defaultBranchRef!?.target!?.history!?.edges!}/>
+                           <CommitsHistory 
+                              repositoryCommits={data?.repository!?.defaultBranchRef!?.target!?.history!?.edges!}
+                              isDark={isDark}
+                            />
                          )}
                        </div>
                      </div>

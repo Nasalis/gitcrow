@@ -5,6 +5,7 @@ module.exports = {
   content: [
     './src/**/*.tsx'
   ],
+  darkMode: 'class',
   theme: {
     screens: {
       'sm/2': '540px',
