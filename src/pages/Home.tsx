@@ -5,11 +5,11 @@ import Error404Video from "./../assets/404 error lost in space.mp4";
 
 export function Home() {
     
-    const { data } = useSearchBar();
+    const { data, loading } = useSearchBar();
 
     return (
         <>
-            {!data ? (
+            {loading ? (
                 <ProfileScreenLoading/>
             ) : (
                 data !== undefined ? (
