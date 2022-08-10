@@ -4,6 +4,7 @@ import { useParams } from "react-router-dom";
 import { CommitsHistory } from "../components/CommitsHistory";
 import { ContributorItem } from "../components/ContributorItem";
 import { LoadIcon } from "../components/LoadIcon";
+import { RepositoryAsideLoading } from "../components/Loading/RepositoryAsideLoading";
 import { PullRequestsChart } from "../components/PullRequestsChart";
 import { RepositoryLanguageChart } from "../components/RepositoryLanguageChart";
 import { formatAmountToGreatValues } from "../utils/formatAmountInfo";
@@ -221,6 +222,9 @@ export function Repository() {
     return (
         <div className="flex items-center justify-center w-full min-h-screen bg-black-100">
             <main className="grid grid-cols-12 grid-rows-1 items-start gap-y-4 mb-4 justify-center">
+              {!data ? (
+                <RepositoryAsideLoading/>
+              ) : (
                 <aside className="grid gap-y-6 w-full col-start-1 col-end-13 row-start-1 row-end-1 lg:relative lg:flex lg:flex-col lg:items-start lg:justify-center xl:w-[23.125rem] xl:col-start-1 xl:col-end-4 bg-black-300 shadow-md rounded-xl p-10">
                   <div className="w-full">
                       <div className="flex items-center gap-x-1">
@@ -334,8 +338,9 @@ export function Repository() {
                     )}
                   </div>
                 </aside>
+              )}
                 {!data ? (
-                  <section className="grid col-start-1 col-end-13 xl:col-start-5 xl:col-end-13 row-start-2 row-end-3 xl:row-start-1 xl:row-end-3 self-stretch px-8 py-6 border border-purple-100">
+                  <section className="grid col-start-1 col-end-13 xl:col-start-5 xl:col-end-13 row-start-2 row-end-3 xl:row-start-1 xl:row-end-3 self-stretch px-8 py-6 border border-purple-100 animate-pulse">
                     <div className="rounded-full w-1/4 bg-purple-100 opacity-70 h-3 mb-8"></div>
                     <div className="h-64 w-full rounded-2xl mb-10 border border-purple-100 opacity-70"></div>
                     <div className="h-64 w-full rounded-2xl mb-10 border border-purple-100 opacity-70"></div>
