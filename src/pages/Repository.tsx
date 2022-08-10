@@ -12,7 +12,7 @@ import { formatAmountToGreatValues } from "../utils/formatAmountInfo";
 import { formatDateTime } from "../utils/formatDate";
 
 const GET_REPOSITORY_QUERY = gql`
-  query getRepositoryData($name: String!, $owner: String!, $after: String){
+  query getRepositoryData($name: String!, $owner: String!, $after: String, $until: GitTimestamp){
     repository(name: $name, owner: $owner) {
       id
       mentionableUsers(first: 30, after: $after) {
@@ -84,7 +84,7 @@ const GET_REPOSITORY_QUERY = gql`
         target {
           ... on Commit {
             id
-            history(until: "2022-08-05T23:59:59Z", first: 50) {
+            history(until: $until, first: 50) {
               edges {
                 node {
                   id
@@ -198,7 +198,8 @@ export function Repository() {
     variables: {
       name: repository, 
       owner: user,
-      after: null
+      after: null,
+      until: `${new Date().getFullYear()}-12-31T23:59:59`
     },
     notifyOnNetworkStatusChange: true
   });

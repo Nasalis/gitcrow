@@ -2,14 +2,14 @@ import { gql, OperationVariables, QueryResult, useLazyQuery } from "@apollo/clie
 import { createContext, ReactNode, useContext, useEffect } from "react";
 
 const GET_USER_QUERY = gql`
-    query getUserData($login: String!) {
+    query getUserData($login: String!, $from: DateTime!, $to: DateTime!) {
         user(login: $login) {
             name
             login
             avatarUrl
             contributionsCollection(
-                from: "2022-01-01T00:00:00Z"
-                to: "2022-12-12T23:59:59Z"
+                from: $from
+                to: $to
             ) {
             totalCommitContributions
             totalPullRequestContributions
@@ -124,7 +124,11 @@ export function SearchBarContextProvider({
     const [getUserInfo, { data, loading }] = useLazyQuery<GetUserDataResponse>(GET_USER_QUERY, {
         notifyOnNetworkStatusChange: true
     })
-    const getUserData = (userName: string = "") => getUserInfo({variables: {login: userName === "" ? "octocat" : userName}})
+    const getUserData = (userName: string = "") => getUserInfo({variables: {
+        login: userName === "" ? "octocat" : userName,
+        from: `${new Date().getFullYear()}-01-01T00:00:00Z`,
+        to: `${new Date().getFullYear()}-12-31T23:59:59Z`
+    }})
 
     useEffect(() => {
         getUserData();

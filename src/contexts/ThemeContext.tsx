@@ -12,7 +12,7 @@ interface ThemeContextProps {
 export const ThemeContext = createContext({} as ThemeContextData);
 
 export function ThemeContextProvider({ children }: ThemeContextProps) {
-    const [isDark, setIsDark] = useState<boolean>(false);
+    const [isDark, setIsDark] = useState<boolean>(true);
 
     function handleTheme() {
         setIsDark(prevState => !prevState);
