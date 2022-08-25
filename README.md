@@ -12,6 +12,8 @@ Website for searching users, via github api, and avaiable information about thei
 * AntDesign Charts
 
 ## Instation:
+If you have nvm installed on your machine, it is recommended to use the following command to use the project node version:
+`nvm use`
 In the root directory, type the following command to install all dependecies:  
 `npm install`  
 After that, create a `.env.local` file containing two essential pieces of informations: your own Github token and the Github API url.    
